@@ -1,0 +1,38 @@
+[
+  {
+    "title": "BreachGuard: Password Aggregator & Policy Analyzer",
+    "description": "Privacy-first password risk engine that evaluates real-world cracking exposure using k-anonymity breach checks, entropy-based risk estimation, and pattern heuristics that catch keyboard walks and leetspeak.",
+    "tags": ["detection", "ai-privacy"],
+    "badges": ["Python", "Flask", "Privacy"],
+    "repo": "",
+    "link": "",
+    "writeup": ""
+  },
+  {
+    "title": "Speaker: Cybersecurity Stronger Together 2026 (GWU)",
+    "description": "Delivered remarks on how higher education bridges technical expertise, policy leadership, and cross-sector collaboration across academia, industry, and government to strengthen national cyber resilience.",
+    "tags": ["policy"],
+    "badges": ["Speaking", "Public-Private"],
+    "repo": "",
+    "link": "",
+    "writeup": ""
+  },
+  {
+    "title": "LA28 Olympics Cyber Tabletop Exercise",
+    "description": "Participated in an Olympic Games cyber tabletop exercise focused on critical infrastructure risk, coordinated response, and public-private decision-making under uncertainty.",
+    "tags": ["policy", "threat-intel"],
+    "badges": ["Tabletop", "Critical Infrastructure"],
+    "repo": "",
+    "link": "",
+    "writeup": ""
+  },
+  {
+    "title": "SILENTFALL: CTI + detection engineering repo",
+    "description": "Defensive research repo focused on zero-click risk, spyware tradecraft, and detection-ready outputs with clear threat intelligence artifacts and implementation notes.",
+    "tags": ["threat-intel", "detection"],
+    "badges": ["Current focus"],
+    "repo": "",
+    "link": "",
+    "writeup": ""
+  }
+]
