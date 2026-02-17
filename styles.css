@@ -1,0 +1,9 @@
+body{
+  font-family: system-ui, Arial, sans-serif;
+  background:#0b0c10;
+  color:#f4f4f6;
+  padding:80px 18px;
+  max-width:900px;
+  margin:0 auto;
+}
+a{color:#C41230;font-weight:700}
