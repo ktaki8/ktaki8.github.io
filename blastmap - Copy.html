@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlastMap — Khadija Taki</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --bg2: #0d1117;
+    --surface: #111820;
+    --border: #1e2a38;
+    --accent: #00c9a7;
+    --accent2: #0077ff;
+    --warn: #ff6b35;
+    --text: #e8edf3;
+    --muted: #5a6a7e;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --serif: 'Instrument Serif', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-back {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 140px 48px 100px;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .tag-green { background: rgba(0,201,167,0.1); color: var(--accent); border: 1px solid rgba(0,201,167,0.25); }
+  .tag-blue { background: rgba(0,119,255,0.1); color: #4da6ff; border: 1px solid rgba(0,119,255,0.25); }
+  .tag-orange { background: rgba(255,107,53,0.1); color: var(--warn); border: 1px solid rgba(255,107,53,0.25); }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  h1 span {
+    color: var(--accent);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 620px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  .overview-cell {
+    background: var(--surface);
+    padding: 28px 32px;
+    border: 1px solid var(--border);
+  }
+
+  .overview-cell:first-child { border-radius: 8px 0 0 0; }
+  .overview-cell:nth-child(2) { border-radius: 0 8px 0 0; }
+  .overview-cell:nth-child(3) { border-radius: 0 0 0 8px; }
+  .overview-cell:last-child { border-radius: 0 0 8px 0; }
+
+  .cell-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .cell-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #b0bcc9;
+    margin-bottom: 24px;
+  }
+
+  .prose strong { color: var(--text); font-weight: 600; }
+
+  .highlight-block {
+    background: linear-gradient(135deg, rgba(0,201,167,0.06), rgba(0,119,255,0.06));
+    border: 1px solid rgba(0,201,167,0.2);
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .highlight-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  }
+
+  .highlight-block p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .tech-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .tech-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .tech-dot.blue { background: var(--accent2); }
+  .tech-dot.orange { background: var(--warn); }
+
+  .tech-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .phase-list {
+    counter-reset: phases;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .phase-item {
+    counter-increment: phases;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 32px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+
+  .phase-item:first-child { border-radius: 8px 8px 0 0; }
+  .phase-item:last-child { border-radius: 0 0 8px 8px; }
+  .phase-item:hover { border-color: rgba(0,201,167,0.4); }
+
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    padding-top: 3px;
+  }
+
+  .phase-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .phase-desc {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .compliance-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 24px 0;
+  }
+
+  .compliance-badge {
+    background: rgba(0,119,255,0.08);
+    border: 1px solid rgba(0,119,255,0.2);
+    border-radius: 6px;
+    padding: 14px 20px;
+    text-align: center;
+    min-width: 140px;
+    transition: background 0.2s;
+  }
+
+  .compliance-badge:hover { background: rgba(0,119,255,0.15); }
+
+  .badge-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: #4da6ff;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .badge-desc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 56px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+  }
+
+  .footer-nav a {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover { color: var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .content-block {
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 80px; }
+    .overview-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ktaki8</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <div class="tag-row">
+    <span class="tag tag-green">Cloud Security</span>
+    <span class="tag tag-blue">AI Infrastructure</span>
+    <span class="tag tag-orange">Threat Modeling</span>
+    <span class="tag tag-green">MITRE ATLAS</span>
+    <span class="tag tag-blue">AWS</span>
+  </div>
+
+  <h1>Blast<span>Map</span></h1>
+
+  <p class="subtitle">
+    An identity-centric threat mapping framework for cloud AI infrastructure —
+    mapping MITRE ATLAS attack tactics to machine identity over-privilege in AWS environments.
+  </p>
+
+  <div class="overview-grid">
+    <div class="overview-cell">
+      <div class="cell-label">Status</div>
+      <div class="cell-value">Active Research</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Venue</div>
+      <div class="cell-value">CMU Scholar Showcase '26</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Environment</div>
+      <div class="cell-value">AWS Cloud / IAM</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Framework</div>
+      <div class="cell-value">MITRE ATLAS</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Overview</div>
+    <p class="prose">
+      BlastMap addresses a growing blind spot in cloud AI security: <strong>machine identities</strong> —
+      IAM roles, service accounts, and instance profiles — are consistently over-privileged in AWS
+      environments hosting AI workloads, creating a wide blast radius when compromised.
+    </p>
+    <p class="prose">
+      The framework systematically maps MITRE ATLAS adversarial ML tactics to specific IAM
+      misconfiguration patterns, enabling security teams to <strong>prioritize identity remediation
+      based on realistic attack paths</strong> rather than theoretical vulnerability scores.
+    </p>
+
+    <div class="highlight-block">
+      <p>"Most cloud AI security frameworks focus on model protection. BlastMap focuses on
+      what attackers actually target first: the identity layer that gives them access to everything else."</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Research Phases</div>
+    <ul class="phase-list">
+      <li class="phase-item">
+        <span class="phase-num">01</span>
+        <div>
+          <div class="phase-title">Attack Surface Enumeration</div>
+          <div class="phase-desc">Catalogued MITRE ATLAS tactics relevant to cloud-hosted AI pipelines — training data poisoning, model inversion, supply chain attacks — and mapped each to corresponding AWS IAM primitives (roles, policies, SCPs).</div>
+        </div>
+      </li>
+      <li class="phase-item">
+        <span class="phase-num">02</span>
+        <div>
+          <div class="phase-title">Over-Privilege Pattern Analysis</div>
+          <div class="phase-desc">Analyzed common IAM over-privilege patterns in ML environments: wildcard S3 permissions on SageMaker roles, cross-account trust misconfigurations, and excessive Lambda execution permissions.</div>
+        </div>
+      </li>
+      <li class="phase-item">
+        <span class="phase-num">03</span>
+        <div>
+          <div class="phase-title">Blast Radius Scoring</div>
+          <div class="phase-desc">Developed a scoring methodology combining CVSS-like severity with lateral movement potential — quantifying how far an attacker can move from a single compromised machine identity.</div>
+        </div>
+      </li>
+      <li class="phase-item">
+        <span class="phase-num">04</span>
+        <div>
+          <div class="phase-title">Regulatory Compliance Mapping</div>
+          <div class="phase-desc">Cross-referenced remediation recommendations with NIST 800-53 control families, SOC 2 Trust Services Criteria, and EU AI Act requirements for high-risk AI systems.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Compliance Coverage</div>
+    <div class="compliance-row">
+      <div class="compliance-badge">
+        <span class="badge-name">NIST 800-53</span>
+        <span class="badge-desc">AC, IA, SC families</span>
+      </div>
+      <div class="compliance-badge">
+        <span class="badge-name">SOC 2</span>
+        <span class="badge-desc">CC6, CC7 criteria</span>
+      </div>
+      <div class="compliance-badge">
+        <span class="badge-name">EU AI Act</span>
+        <span class="badge-desc">High-risk systems</span>
+      </div>
+      <div class="compliance-badge">
+        <span class="badge-name">MITRE ATLAS</span>
+        <span class="badge-desc">Full tactic coverage</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Tools & Stack</div>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">AWS IAM</span></div>
+      <div class="tech-item"><div class="tech-dot blue"></div><span class="tech-name">MITRE ATLAS</span></div>
+      <div class="tech-item"><div class="tech-dot orange"></div><span class="tech-name">AWS SageMaker</span></div>
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">Python</span></div>
+      <div class="tech-item"><div class="tech-dot blue"></div><span class="tech-name">AWS Policy Sim</span></div>
+      <div class="tech-item"><div class="tech-dot orange"></div><span class="tech-name">NIST 800-53</span></div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="index.html">← All Projects</a>
+    <a href="breachguard.html">Next: BreachGuard →</a>
+  </div>
+</main>
+
+</body>
+</html>
