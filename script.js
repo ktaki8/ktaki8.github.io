@@ -1,5 +1,5 @@
 // Portfolio JS: year, profile links, projects from JSON + filters + debug
-
+alert("NEW SCRIPT LOADED");
 const YEAR = document.getElementById("year");
 if (YEAR) YEAR.textContent = new Date().getFullYear();
 
