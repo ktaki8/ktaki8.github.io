@@ -1,9 +1,8 @@
-// Minimal JS: year, link wiring, project grid + filters
+// Portfolio JS: year, profile links, projects from JSON + filters + debug
 
 const YEAR = document.getElementById("year");
 if (YEAR) YEAR.textContent = new Date().getFullYear();
 
-// Profile links
 const LINKS = {
   linkedin: "https://www.linkedin.com/in/khadijatakicyber",
   github: "https://github.com/ktaki8",
@@ -16,7 +15,6 @@ const resumeLink = document.getElementById("resumeLink");
 
 if (linkedinLink) linkedinLink.href = LINKS.linkedin;
 if (githubLink) githubLink.href = LINKS.github;
-
 if (resumeLink){
   resumeLink.href = LINKS.resume;
   resumeLink.target = "_blank";
@@ -29,10 +27,34 @@ const chips = Array.from(document.querySelectorAll(".chip"));
 let allProjects = [];
 let activeFilter = "all";
 
-function renderProjects(){
+// Builds a URL that works on GitHub Pages for both internal + external links
+function buildHref(raw){
+  const href = (raw || "").trim();
+  if (!href) return "";
 
+  const isExternal = href.startsWith("http://") || href.startsWith("https://");
+  if (isExternal) return href;
+
+  // Internal: resolve relative to the current folder of index.html
+  // This handles repo base paths automatically.
+  return new URL(href.replace(/^\.?\//, ""), window.location.href).toString();
+}
+
+function showErrorOnPage(msg){
   if (!grid) return;
+  grid.innerHTML = `
+    <div class="project" style="border:1px solid rgba(255,0,0,.35);">
+      <div class="projectTop">
+        <h3>Projects failed to load</h3>
+      </div>
+      <p style="opacity:.9">${msg}</p>
+      <p style="opacity:.75">Open your browser console to see details.</p>
+    </div>
+  `;
+}
 
+function renderProjects(){
+  if (!grid) return;
   grid.innerHTML = "";
 
   const filtered = allProjects.filter(p => {
@@ -41,7 +63,6 @@ function renderProjects(){
   });
 
   filtered.forEach(p => {
-
     const card = document.createElement("div");
     card.className = "project";
 
@@ -54,14 +75,11 @@ function renderProjects(){
     const badges = document.createElement("div");
     badges.className = "badges";
 
-    (p.badges || []).slice(0,3).forEach(b => {
-
+    (p.badges || []).slice(0, 3).forEach(b => {
       const bd = document.createElement("span");
-      bd.className = "badge" + (b.toLowerCase().includes("current") ? " hot" : "");
+      bd.className = "badge" + (String(b).toLowerCase().includes("current") ? " hot" : "");
       bd.textContent = b;
-
       badges.appendChild(bd);
-
     });
 
     top.appendChild(title);
@@ -73,122 +91,86 @@ function renderProjects(){
     const links = document.createElement("div");
     links.className = "projectLinks";
 
-    // PROJECT LINK
+    // Project
     if (p.link){
-
       const a = document.createElement("a");
+      const finalHref = buildHref(p.link);
 
-      const href = (p.link || "").trim();
+      console.log("Project link:", p.title, "=>", p.link, "=>", finalHref);
 
-      const isExternal =
-        href.startsWith("http://") ||
-        href.startsWith("https://");
+      a.href = finalHref;
+      a.textContent = "Project";
 
+      // only open new tab for external links
+      const isExternal = String(p.link).startsWith("http://") || String(p.link).startsWith("https://");
       if (isExternal){
-        a.href = href;
         a.target = "_blank";
         a.rel = "noreferrer";
-      } else {
-        // ensure GitHub Pages resolves correctly
-        a.href = `./${href.replace(/^\.?\//, "")}`;
       }
-
-      a.textContent = "Project";
 
       links.appendChild(a);
     }
 
-    // REPO LINK
+    // Repo
     if (p.repo){
-
       const a = document.createElement("a");
-
       a.href = p.repo;
       a.target = "_blank";
       a.rel = "noreferrer";
-
       a.textContent = "Repo";
-
       links.appendChild(a);
     }
 
-    // WRITEUP LINK
+    // Write-up
     if (p.writeup){
-
       const a = document.createElement("a");
-
       a.href = p.writeup;
       a.target = "_blank";
       a.rel = "noreferrer";
-
       a.textContent = "Write-up";
-
       links.appendChild(a);
     }
 
     card.appendChild(top);
     card.appendChild(desc);
     card.appendChild(links);
-
     grid.appendChild(card);
-
   });
 }
 
 async function loadProjects(){
-
   try{
+    const jsonUrl = new URL("projects.json", window.location.href).toString();
+    console.log("Fetching JSON from:", jsonUrl);
 
-    // IMPORTANT: ./ ensures GitHub Pages loads correctly
-    const res = await fetch("./projects.json", { cache: "no-store" });
+    const res = await fetch(jsonUrl, { cache: "no-store" });
+    console.log("projects.json status:", res.status);
 
-    if (!res.ok) throw new Error("projects.json not found");
+    if (!res.ok) throw new Error(`projects.json request failed (${res.status})`);
 
-    allProjects = await res.json();
+    const data = await res.json();
+    console.log("projects.json parsed OK. Count:", Array.isArray(data) ? data.length : "NOT AN ARRAY");
 
-  } catch(e){
+    if (!Array.isArray(data)){
+      throw new Error("projects.json must be an array: [ { ... }, { ... } ]");
+    }
 
-    console.warn("Could not load projects.json, using fallback");
+    allProjects = data;
 
-    allProjects = [
-      {
-        title: "BreachGuard",
-        description: "Privacy-first password risk engine using breach analysis and entropy modeling.",
-        tags: ["detection","ai-privacy"],
-        badges: ["Python","Flask"]
-      },
-      {
-        title: "LA28 Olympics Tabletop Exercise",
-        description: "Cyber crisis tabletop focused on coordinated response and infrastructure resilience.",
-        tags: ["policy","threat-intel"],
-        badges: ["Tabletop"]
-      },
-      {
-        title: "SILENTFALL",
-        description: "Threat intelligence and detection engineering research.",
-        tags: ["threat-intel","detection"],
-        badges: ["Current focus"]
-      }
-    ];
+    renderProjects();
+  } catch (e){
+    console.error("LOAD PROJECTS ERROR:", e);
+    showErrorOnPage(String(e.message || e));
   }
-
-  renderProjects();
 }
 
 chips.forEach(btn => {
-
   btn.addEventListener("click", () => {
-
     chips.forEach(x => x.classList.remove("active"));
-
     btn.classList.add("active");
-
     activeFilter = btn.dataset.filter || "all";
-
     renderProjects();
-
   });
-
 });
 
 loadProjects();
