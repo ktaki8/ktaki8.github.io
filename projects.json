@@ -14,7 +14,7 @@
     "tags": ["policy"],
     "badges": ["Speaking", "Public-Private"],
     "repo": "",
-    "link": "Speaker",
+    "link": "#",
     "writeup": ""
   },
   {
@@ -35,13 +35,13 @@
     "link": "silentfall.html",
     "writeup": ""
   },
-  ,{
-  "title": "BlastMap",
-  "description": "Identity-centric threat mapping framework for cloud AI infrastructure — mapping MITRE ATLAS attack tactics to machine identity over-privilege in AWS environments.",
-  "tags": ["cloud-security", "ai-governance"],
-  "badges": ["MITRE ATLAS", "AWS IAM", "Cloud Security"],
-  "repo": "",
-  "link": "blastmap.html",
-  "writeup": ""
-}
+  {
+    "title": "BlastMap",
+    "description": "Identity-centric threat mapping framework for cloud AI infrastructure — mapping MITRE ATLAS attack tactics to machine identity over-privilege in AWS environments.",
+    "tags": ["cloud-security", "ai-governance"],
+    "badges": ["MITRE ATLAS", "AWS IAM", "Cloud Security"],
+    "repo": "",
+    "link": "blastmap.html",
+    "writeup": ""
+  }
 ]
