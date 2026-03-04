@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SILENTFALL — Khadija Taki</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1018;
+    --border: #181e2c;
+    --accent: #7b68ee;
+    --accent2: #a78bfa;
+    --hot: #00c9a7;
+    --text: #e8edf3;
+    --muted: #4a5568;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --serif: 'Instrument Serif', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 800px 600px at 20% 20%, rgba(123,104,238,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 600px 400px at 80% 80%, rgba(0,201,167,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(6,8,16,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-back {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 140px 48px 100px;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .tag-purple { background: rgba(123,104,238,0.12); color: var(--accent2); border: 1px solid rgba(123,104,238,0.3); }
+  .tag-green { background: rgba(0,201,167,0.1); color: var(--hot); border: 1px solid rgba(0,201,167,0.25); }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 7vw, 84px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  h1 em {
+    color: var(--accent2);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 620px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .meta-strip {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  .meta-item {
+    flex: 1;
+    padding: 24px 28px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+  }
+
+  .meta-item:last-child { border-right: none; }
+
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .meta-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #909dae;
+    margin-bottom: 24px;
+  }
+
+  .prose strong { color: var(--text); }
+
+  .highlight-block {
+    background: linear-gradient(135deg, rgba(123,104,238,0.07), rgba(167,139,250,0.04));
+    border: 1px solid rgba(123,104,238,0.25);
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .highlight-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  }
+
+  .highlight-block p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .atlas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 24px 0;
+  }
+
+  .atlas-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    transition: border-color 0.2s;
+  }
+
+  .atlas-card:hover { border-color: rgba(123,104,238,0.4); }
+  .atlas-card:first-child { border-radius: 8px 0 0 0; }
+  .atlas-card:nth-child(2) { border-radius: 0 8px 0 0; }
+  .atlas-card:nth-child(3) { border-radius: 0 0 0 8px; }
+  .atlas-card:last-child { border-radius: 0 0 8px 0; }
+
+  .atlas-tactic {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .atlas-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .atlas-desc {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin: 24px 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(123,104,238,0.6);
+  }
+
+  .timeline-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .timeline-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .timeline-desc {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 24px 0;
+  }
+
+  .tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .tech-item:hover { border-color: var(--accent); }
+
+  .tech-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .tech-dot.green { background: var(--hot); }
+
+  .tech-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .content-block {
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 56px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+  }
+
+  .footer-nav a {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover { color: var(--accent2); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 80px; }
+    .meta-strip { flex-direction: column; }
+    .atlas-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ktaki8</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <div class="tag-row">
+    <span class="tag tag-purple">CTI</span>
+    <span class="tag tag-purple">MITRE ATT&CK</span>
+    <span class="tag tag-green">Detection Engineering</span>
+    <span class="tag tag-purple">Zero-Click</span>
+  </div>
+
+  <h1>SILENT<em>FALL</em></h1>
+
+  <p class="subtitle">
+    Threat intelligence and detection engineering framework for advanced attack surface mapping —
+    with a focus on zero-click exploitation analysis structured under MITRE ATT&CK.
+  </p>
+
+  <div class="meta-strip">
+    <div class="meta-item">
+      <div class="meta-label">Focus Area</div>
+      <div class="meta-value">Zero-Click Exploits</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Framework</div>
+      <div class="meta-value">MITRE ATT&CK</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Output</div>
+      <div class="meta-value">Detection Rules</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Scope</div>
+      <div class="meta-value">Endpoint + Network</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Overview</div>
+    <p class="prose">
+      SILENTFALL is a CTI framework designed around a specific threat category that is notoriously
+      difficult to detect: <strong>zero-click exploitation</strong> — attacks that require no user
+      interaction and leave minimal forensic artifacts.
+    </p>
+    <p class="prose">
+      The framework maps known zero-click attack patterns (NSO Group Pegasus, FORCEDENTRY,
+      BlastPass) to <strong>MITRE ATT&CK techniques</strong>, then engineers detection logic
+      at the network and endpoint layer targeting the behavioral indicators that persist even
+      when payload artifacts are cleaned.
+    </p>
+
+    <div class="highlight-block">
+      <p>"Zero-click attacks are undetectable by definition at the payload level.
+      SILENTFALL detects them at the behavioral level — the C2 callouts, the anomalous
+      process spawns, the impossible data flows."</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// ATT&CK Coverage</div>
+    <div class="atlas-grid">
+      <div class="atlas-card">
+        <div class="atlas-tactic">TA0001 · Initial Access</div>
+        <div class="atlas-name">Exploit Public-Facing App</div>
+        <div class="atlas-desc">Mapping zero-click delivery vectors via iMessage, WhatsApp, and WebKit rendering engine vulnerabilities.</div>
+      </div>
+      <div class="atlas-card">
+        <div class="atlas-tactic">TA0011 · Command & Control</div>
+        <div class="atlas-name">Encrypted Channel</div>
+        <div class="atlas-desc">Detection logic for anomalous TLS beacon patterns characteristic of commercial spyware C2 infrastructure.</div>
+      </div>
+      <div class="atlas-card">
+        <div class="atlas-tactic">TA0006 · Credential Access</div>
+        <div class="atlas-name">OS Credential Dumping</div>
+        <div class="atlas-desc">Behavioral indicators for keychain access and credential extraction post-compromise on iOS and macOS targets.</div>
+      </div>
+      <div class="atlas-card">
+        <div class="atlas-tactic">TA0010 · Exfiltration</div>
+        <div class="atlas-name">Automated Exfiltration</div>
+        <div class="atlas-desc">Network-layer detection of data staging and exfiltration timing patterns aligned with spyware operational profiles.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Research Timeline</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-label">Phase 01</div>
+        <div class="timeline-title">Threat Actor Profiling</div>
+        <div class="timeline-desc">Analyzed NSO Group, Candiru, and QuaDream operational TTPs from Citizen Lab, Amnesty Tech, and Google Project Zero reporting.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-label">Phase 02</div>
+        <div class="timeline-title">ATT&CK Technique Mapping</div>
+        <div class="timeline-desc">Structured attack chains for FORCEDENTRY and BlastPass into ATT&CK Navigator layers, identifying detection gaps in current tooling.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-label">Phase 03</div>
+        <div class="timeline-title">Detection Engineering</div>
+        <div class="timeline-desc">Developed YARA rules and Sigma-compatible detection logic targeting behavioral indicators persistent across payload variants.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Tools & Sources</div>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">MITRE ATT&CK</span></div>
+      <div class="tech-item"><div class="tech-dot green"></div><span class="tech-name">ATT&CK Navigator</span></div>
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">YARA Rules</span></div>
+      <div class="tech-item"><div class="tech-dot green"></div><span class="tech-name">Sigma</span></div>
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">Citizen Lab</span></div>
+      <div class="tech-item"><div class="tech-dot green"></div><span class="tech-name">Project Zero</span></div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="breachguard.html">← BreachGuard</a>
+    <a href="tabletop.html">Next: Tabletop Exercise →</a>
+  </div>
+</main>
+
+</body>
+</html>

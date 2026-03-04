@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BreachGuard — Khadija Taki</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --bg2: #0d1117;
+    --surface: #111820;
+    --border: #1e2a38;
+    --accent: #ff6b35;
+    --accent2: #ffb347;
+    --cool: #00c9a7;
+    --text: #e8edf3;
+    --muted: #5a6a7e;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --serif: 'Instrument Serif', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,53,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,53,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-back {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 140px 48px 100px;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .tag-orange { background: rgba(255,107,53,0.1); color: var(--accent); border: 1px solid rgba(255,107,53,0.25); }
+  .tag-yellow { background: rgba(255,179,71,0.1); color: var(--accent2); border: 1px solid rgba(255,179,71,0.25); }
+  .tag-green { background: rgba(0,201,167,0.1); color: var(--cool); border: 1px solid rgba(0,201,167,0.25); }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  h1 span {
+    color: var(--accent);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 620px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  .stat-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+  }
+
+  .stat-cell:first-child { border-radius: 8px 0 0 8px; }
+  .stat-cell:last-child { border-radius: 0 8px 8px 0; }
+
+  .stat-num {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #b0bcc9;
+    margin-bottom: 24px;
+  }
+
+  .prose strong { color: var(--text); font-weight: 600; }
+
+  .highlight-block {
+    background: linear-gradient(135deg, rgba(255,107,53,0.06), rgba(255,179,71,0.04));
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .highlight-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  }
+
+  .highlight-block p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(255,107,53,0.4);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .feature-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .feature-desc {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .code-block {
+    background: #0a0f16;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #8ab4c9;
+  }
+
+  .code-block .comment { color: var(--muted); }
+  .code-block .key { color: var(--accent); }
+  .code-block .val { color: var(--accent2); }
+  .code-block .str { color: var(--cool); }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 24px 0;
+  }
+
+  .tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .tech-item:hover { border-color: var(--accent); }
+
+  .tech-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .tech-dot.green { background: var(--cool); }
+  .tech-dot.yellow { background: var(--accent2); }
+
+  .tech-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 56px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+  }
+
+  .footer-nav a {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover { color: var(--accent); }
+
+  .content-block {
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 80px; }
+    .stat-row { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ktaki8</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <div class="tag-row">
+    <span class="tag tag-orange">Python</span>
+    <span class="tag tag-yellow">Privacy Engineering</span>
+    <span class="tag tag-green">Risk Modeling</span>
+    <span class="tag tag-orange">CISA KEV</span>
+  </div>
+
+  <h1>Breach<span>Guard</span></h1>
+
+  <p class="subtitle">
+    Credential breach aggregation and policy analysis system with entropy-based
+    risk scoring — reducing manual credential review overhead by approximately 40%.
+  </p>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-num">~40%</div>
+      <div class="stat-label">Reduction in manual review</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Live threat intel APIs</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Risk scoring dimensions</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Overview</div>
+    <p class="prose">
+      BreachGuard was built to solve a real operational problem: security teams drowning in
+      breach notification data with no structured way to <strong>prioritize which compromised
+      credentials pose the most immediate risk</strong>.
+    </p>
+    <p class="prose">
+      The system aggregates breach intelligence from the Have I Been Pwned API and cross-references
+      it against CISA's Known Exploited Vulnerabilities (KEV) catalog, applying an <strong>entropy-based
+      scoring model</strong> to rank credential exposure by exploitability and organizational impact.
+    </p>
+
+    <div class="highlight-block">
+      <p>"Not all breached credentials are equal. BreachGuard surfaces the ones that matter — before
+      an attacker uses them."</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Core Features</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Breach Aggregation</div>
+        <div class="feature-desc">Queries Have I Been Pwned API for credential exposure data across known breach databases. Deduplicates and normalizes results across sources.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Entropy Scoring</div>
+        <div class="feature-desc">Custom entropy model assesses password strength and reuse patterns. Higher entropy scores surface credentials most likely to enable lateral movement.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">KEV Cross-Reference</div>
+        <div class="feature-desc">Integrates CISA KEV data to flag breaches associated with actively exploited vulnerabilities, elevating priority for credentials tied to KEV-listed systems.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Policy Analysis</div>
+        <div class="feature-desc">Compares organizational password policies against breach patterns, generating structured remediation recommendations aligned with NIST SP 800-63B.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Risk Scoring Logic</div>
+    <div class="code-block">
+      <pre><span class="comment"># Simplified scoring model</span>
+<span class="key">def</span> <span class="str">calculate_risk_score</span>(credential):
+    score = <span class="val">0</span>
+
+    <span class="comment"># Entropy component (password strength)</span>
+    score += entropy_score(credential.password) * <span class="val">0.4</span>
+
+    <span class="comment"># KEV exposure — active exploitation indicator</span>
+    <span class="key">if</span> credential.service <span class="key">in</span> kev_catalog:
+        score += <span class="val">40</span>
+
+    <span class="comment"># Reuse factor across breach databases</span>
+    score += reuse_count(credential) * <span class="val">5</span>
+
+    <span class="key">return</span> normalize(score)  <span class="comment"># 0–100 risk scale</span></pre>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">// Stack & APIs</div>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">Python 3</span></div>
+      <div class="tech-item"><div class="tech-dot yellow"></div><span class="tech-name">HIBP API</span></div>
+      <div class="tech-item"><div class="tech-dot green"></div><span class="tech-name">CISA KEV</span></div>
+      <div class="tech-item"><div class="tech-dot"></div><span class="tech-name">Pandas</span></div>
+      <div class="tech-item"><div class="tech-dot yellow"></div><span class="tech-name">Requests</span></div>
+      <div class="tech-item"><div class="tech-dot green"></div><span class="tech-name">NIST 800-63B</span></div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="blastmap.html">← BlastMap</a>
+    <a href="silentfall.html">Next: SILENTFALL →</a>
+  </div>
+</main>
+
+</body>
+</html>
