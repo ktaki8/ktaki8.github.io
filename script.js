@@ -54,7 +54,6 @@ function showErrorOnPage(msg){
 }
 
 function renderProjects(){
-
   if (!grid) return;
 
   grid.innerHTML = "";
@@ -65,27 +64,16 @@ function renderProjects(){
   });
 
   filtered.forEach(p => {
-
     const hrefRaw = (p.link || "").trim();
-
-    const isExternal =
-      hrefRaw.startsWith("http://") ||
-      hrefRaw.startsWith("https://");
-
-    const href = hrefRaw
-      ? (isExternal
-          ? hrefRaw
-          : new URL(hrefRaw.replace(/^\.?\//, ""), window.location.href).toString()
-        )
-      : "";
+    const href = buildHref(hrefRaw);
 
     const card = href ? document.createElement("a") : document.createElement("div");
-
     card.className = "project";
 
     if (href){
       card.href = href;
 
+      const isExternal = hrefRaw.startsWith("http://") || hrefRaw.startsWith("https://");
       if (isExternal){
         card.target = "_blank";
         card.rel = "noreferrer";
@@ -102,30 +90,49 @@ function renderProjects(){
     badges.className = "badges";
 
     (p.badges || []).slice(0,3).forEach(b => {
-
       const bd = document.createElement("span");
-
-      bd.className = "badge" + (b.toLowerCase().includes("current") ? " hot" : "");
-
+      bd.className = "badge" + (String(b).toLowerCase().includes("current") ? " hot" : "");
       bd.textContent = b;
-
       badges.appendChild(bd);
-
     });
 
     top.appendChild(title);
     top.appendChild(badges);
 
     const desc = document.createElement("p");
-
     desc.textContent = p.description || "";
 
     card.appendChild(top);
     card.appendChild(desc);
 
     grid.appendChild(card);
-
   });
-
 }
+
+async function loadProjects(){
+  try{
+    const jsonUrl = new URL("projects.json", window.location.href).toString();
+    const res = await fetch(jsonUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error(`projects.json request failed (${res.status})`);
+
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("projects.json must be an array");
+
+    allProjects = data;
+    renderProjects();
+  } catch(e){
+    console.error(e);
+    showErrorOnPage(String(e.message || e));
+  }
+}
+
+chips.forEach(btn => {
+  btn.addEventListener("click", () => {
+    chips.forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter || "all";
+    renderProjects();
+  });
+});
+
 loadProjects();
