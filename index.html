@@ -260,7 +260,7 @@
     /* ─── Project cards ──────────────────────────────────────────── */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
     .project-card {
@@ -272,6 +272,7 @@
       transition: border-color .22s, transform .22s, box-shadow .22s;
       position: relative; overflow: hidden;
     }
+    a.project-card { cursor: pointer; display: flex; }
     .project-card:hover {
       border-color: rgba(192,17,17,.4);
       transform: translateY(-3px);
@@ -390,6 +391,7 @@
     .fade-in:nth-child(1) { animation-delay: .05s; }
     .fade-in:nth-child(2) { animation-delay: .15s; }
     .fade-in:nth-child(3) { animation-delay: .25s; }
+    .fade-in:nth-child(4) { animation-delay: .35s; }
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
     }
@@ -515,7 +517,7 @@
 
     <div class="projects-grid">
 
-      <div class="project-card fade-in">
+      <a href="breachguard.html" class="project-card fade-in">
         <div class="card-tag">Python · Privacy Engineering</div>
         <h3>BreachGuard</h3>
         <p>Credential breach aggregation and policy analysis system. Designed entropy scoring and structured risk categorization logic, reducing manual credential review by approximately 40%.</p>
@@ -524,9 +526,20 @@
           <span class="chip">Privacy Engineering</span>
           <span class="chip">Risk Modeling</span>
         </div>
-      </div>
+      </a>
 
-      <div class="project-card fade-in">
+      <a href="blastmap.html" class="project-card fade-in">
+        <div class="card-tag">Cloud Security · AI Infrastructure</div>
+        <h3>BlastMap</h3>
+        <p>Identity-centric threat mapping framework for cloud AI infrastructure. Maps MITRE ATLAS attack tactics to machine identity over-privilege in AWS environments with continuous CloudTrail monitoring.</p>
+        <div class="card-chips">
+          <span class="chip">AWS</span>
+          <span class="chip">MITRE ATLAS</span>
+          <span class="chip">IAM Security</span>
+        </div>
+      </a>
+
+      <a href="silentfall.html" class="project-card fade-in">
         <div class="card-tag">CTI · Detection Strategy</div>
         <h3>SILENTFALL</h3>
         <p>Threat intelligence and detection engineering framework focused on advanced attack surface mapping and zero-click exploitation analysis. Structured mapping aligned with MITRE ATT&CK.</p>
@@ -535,9 +548,9 @@
           <span class="chip">MITRE ATT&CK</span>
           <span class="chip">Detection Eng.</span>
         </div>
-      </div>
+      </a>
 
-      <div class="project-card fade-in">
+      <a href="tabletop.html" class="project-card fade-in">
         <div class="card-tag">Governance · Incident Response</div>
         <h3>Cyber Resilience Tabletop</h3>
         <p>Large-scale critical infrastructure exercise combining technical incident response and governance-level decision simulation for public-private coordination.</p>
@@ -546,7 +559,7 @@
           <span class="chip">Governance</span>
           <span class="chip">Systems Risk</span>
         </div>
-      </div>
+      </a>
 
     </div>
   </div>
@@ -604,6 +617,5 @@
 </footer>
 
 <script src="script.js"></script>
-
 </body>
 </html>
