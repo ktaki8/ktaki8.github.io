@@ -886,7 +886,24 @@ action: "Review vendor integrations and increase monitoring for related indicato
 }
 
 ];
+const API_BASE = "https://space-cyber-brief-crew.onrender.com";
 
+async function loadSignals(){
+
+  try {
+
+    const response = await fetch(`${API_BASE}/api/signals`);
+    const signals = await response.json();
+
+    console.log("Live signals from API:", signals);
+
+  } catch(error){
+
+    console.error("Error loading signals:", error);
+
+  }
+
+}
 function generateBrief(){
 
 const brief = demoBriefs[Math.floor(Math.random() * demoBriefs.length)];
@@ -916,7 +933,7 @@ output.classList.add("hidden");
 output.innerHTML = "";
 
 }
-
+loadSignals();
 </script>
 </body>
 </html>
