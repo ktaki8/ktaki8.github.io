@@ -498,7 +498,9 @@ h1 span{
   main{
     padding:120px 22px 80px;
   }
-
+.feed-grid{
+  grid-template-columns:1fr;
+}
   .hero::after,
   .hero::before{
     display:none;
@@ -525,6 +527,45 @@ h1 span{
     flex-direction:column;
     gap:18px;
   }
+}
+  .feed-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.feed-card{
+  background:linear-gradient(180deg, rgba(17,24,32,0.98), rgba(13,20,29,0.98));
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:22px;
+}
+
+.feed-source{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,46,136,0.1);
+  border:1px solid rgba(255,46,136,0.25);
+  color:var(--accent);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.feed-card h3{
+  font-size:18px;
+  line-height:1.45;
+  color:var(--text);
+  margin-bottom:10px;
+}
+
+.feed-card p{
+  color:var(--soft);
+  line-height:1.75;
+  font-size:15px;
 }
 .demo-panel{
   background:linear-gradient(180deg, rgba(17,24,32,0.98), rgba(10,15,22,0.98));
@@ -752,7 +793,41 @@ h1 span{
       </ul>
     </div>
   </section>
+  <div class="divider"></div>
 
+<section class="section" id="intel-feed">
+  <div class="section-label">// Incoming Intelligence Signals</div>
+
+  <p class="prose">
+    These sample signals represent the kinds of cyber and space-related reporting Space Cyber Crew is designed to monitor, filter, and transform into analyst-style threat intelligence output.
+  </p>
+
+  <div class="feed-grid">
+    <div class="feed-card">
+      <div class="feed-source">CISA Advisory</div>
+      <h3>New vulnerability disclosure affecting internet-exposed network infrastructure</h3>
+      <p>Potential relevance for ground systems and connected communications environments.</p>
+    </div>
+
+    <div class="feed-card">
+      <div class="feed-source">OSINT Monitoring</div>
+      <h3>Unusual scanning activity observed against satellite support infrastructure</h3>
+      <p>Pattern may indicate reconnaissance targeting externally exposed services.</p>
+    </div>
+
+    <div class="feed-card">
+      <div class="feed-source">Third-Party Risk Signal</div>
+      <h3>Cyber incident reported at vendor supporting communications operations</h3>
+      <p>Could introduce inherited exposure across downstream mission-support systems.</p>
+    </div>
+
+    <div class="feed-card">
+      <div class="feed-source">Space Sector Reporting</div>
+      <h3>Discussion of cyber resilience gaps in satellite-ground communication chains</h3>
+      <p>Highlights the need for earlier warning and better intelligence correlation.</p>
+    </div>
+  </div>
+</section>
     <section class="section" id="prototype-demo">
 
 <div class="section-label">// Try the Prototype</div>
