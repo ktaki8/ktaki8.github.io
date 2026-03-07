@@ -226,6 +226,7 @@ h1 span{
   letter-spacing:.06em;
   text-transform:uppercase;
   transition:.2s ease;
+  cursor:pointer;
 }
 
 .btn-primary{
@@ -470,65 +471,7 @@ h1 span{
   font-size:15px;
 }
 
-.footer-nav{
-  display:flex;
-  justify-content:space-between;
-  border-top:1px solid var(--border);
-  padding-top:40px;
-  margin-top:80px;
-}
-
-.footer-nav a{
-  font-family:var(--mono);
-  font-size:13px;
-  color:var(--muted);
-  text-decoration:none;
-}
-
-.footer-nav a:hover{
-  color:var(--accent);
-}
-
-@media (max-width: 900px){
-
-  nav{
-    padding:18px 22px;
-  }
-
-  main{
-    padding:120px 22px 80px;
-  }
 .feed-grid{
-  grid-template-columns:1fr;
-}
-  .hero::after,
-  .hero::before{
-    display:none;
-  }
-
-  .stat-row{
-    grid-template-columns:1fr;
-  }
-
-  .stat-cell:first-child,
-  .stat-cell:last-child{
-    border-radius:0;
-  }
-
-  .capabilities-grid{
-    grid-template-columns:1fr;
-  }
-
-  .highlight{
-    font-size:24px;
-  }
-
-  .footer-nav{
-    flex-direction:column;
-    gap:18px;
-  }
-}
-  .feed-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:18px;
@@ -566,7 +509,22 @@ h1 span{
   color:var(--soft);
   line-height:1.75;
   font-size:15px;
+  margin-bottom:12px;
 }
+
+.feed-card a{
+  color:var(--accent2);
+  text-decoration:none;
+  font-family:var(--mono);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.feed-card a:hover{
+  color:var(--text);
+}
+
 .demo-panel{
   background:linear-gradient(180deg, rgba(17,24,32,0.98), rgba(10,15,22,0.98));
   border:1px solid var(--border);
@@ -608,6 +566,68 @@ h1 span{
 .hidden{
   display:none;
 }
+
+.footer-nav{
+  display:flex;
+  justify-content:space-between;
+  border-top:1px solid var(--border);
+  padding-top:40px;
+  margin-top:80px;
+}
+
+.footer-nav a{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--muted);
+  text-decoration:none;
+}
+
+.footer-nav a:hover{
+  color:var(--accent);
+}
+
+@media (max-width: 900px){
+
+  nav{
+    padding:18px 22px;
+  }
+
+  main{
+    padding:120px 22px 80px;
+  }
+
+  .hero::after,
+  .hero::before{
+    display:none;
+  }
+
+  .stat-row{
+    grid-template-columns:1fr;
+  }
+
+  .stat-cell:first-child,
+  .stat-cell:last-child{
+    border-radius:0;
+  }
+
+  .capabilities-grid{
+    grid-template-columns:1fr;
+  }
+
+  .feed-grid{
+    grid-template-columns:1fr;
+  }
+
+  .highlight{
+    font-size:24px;
+  }
+
+  .footer-nav{
+    flex-direction:column;
+    gap:18px;
+  }
+}
+
 </style>
 
 </head>
@@ -633,9 +653,7 @@ h1 span{
     <h1>Space Cyber <span>Crew</span></h1>
 
     <p class="subtitle">
-      <p class="subtitle">
-  An AI-driven multi-agent threat intelligence prototype designed to simulate how cyber and space-related signals can be transformed into structured analyst-ready output.
-
+      An AI-driven multi-agent threat intelligence prototype designed to simulate how cyber and space-related signals can be transformed into structured analyst-ready output.
     </p>
 
     <div class="hero-actions">
@@ -795,176 +813,136 @@ h1 span{
       </ul>
     </div>
   </section>
+
   <div class="divider"></div>
 
-<section class="section" id="intel-feed">
-  <div class="section-label">// Incoming Intelligence Signals</div>
+  <section class="section" id="intel-feed">
+    <div class="section-label">// Incoming Intelligence Signals</div>
 
-  <p class="prose">
-    These sample signals represent the kinds of cyber and space-related reporting Space Cyber Crew is designed to monitor, filter, and transform into analyst-style threat intelligence output.
-  </p>
+    <p class="prose">
+      These live public-source signals represent the kinds of cyber and space-related reporting Space Cyber Crew is designed to monitor, filter, and transform into analyst-style threat intelligence output.
+    </p>
 
-  <div class="feed-grid">
-    <div class="feed-card">
-      <div class="feed-source">CISA Advisory</div>
-      <h3>New vulnerability disclosure affecting internet-exposed network infrastructure</h3>
-      <p>Potential relevance for ground systems and connected communications environments.</p>
+    <div class="feed-grid">
+      <div class="feed-card">
+        <div class="feed-source">Loading</div>
+        <h3>Fetching live signals...</h3>
+        <p>Please wait while Space Cyber Crew loads real public-source intelligence feeds.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="feed-card">
-      <div class="feed-source">OSINT Monitoring</div>
-      <h3>Unusual scanning activity observed against satellite support infrastructure</h3>
-      <p>Pattern may indicate reconnaissance targeting externally exposed services.</p>
+  <div class="divider"></div>
+
+  <section class="section" id="prototype-demo">
+    <div class="section-label">// Try the Prototype</div>
+
+    <p class="prose">
+      This interactive demo simulates how Space Cyber Crew transforms incoming cyber risk signals into a concise analyst-style threat brief.
+    </p>
+
+    <div class="demo-panel">
+      <button type="button" class="btn btn-primary" onclick="generateBrief()">Generate Demo Brief</button>
+      <button type="button" class="btn btn-secondary" onclick="clearBrief()">Clear</button>
+
+      <div id="demo-output" class="demo-output hidden"></div>
     </div>
+  </section>
 
-    <div class="feed-card">
-      <div class="feed-source">Third-Party Risk Signal</div>
-      <h3>Cyber incident reported at vendor supporting communications operations</h3>
-      <p>Could introduce inherited exposure across downstream mission-support systems.</p>
-    </div>
+  <div class="divider"></div>
 
-    <div class="feed-card">
-      <div class="feed-source">Space Sector Reporting</div>
-      <h3>Discussion of cyber resilience gaps in satellite-ground communication chains</h3>
-      <p>Highlights the need for earlier warning and better intelligence correlation.</p>
-    </div>
-  </div>
-</section>
-    <section class="section" id="prototype-demo">
-
-<div class="section-label">// Try the Prototype</div>
-
-<p class="prose">
-This interactive demo simulates how Space Cyber Crew transforms incoming cyber risk signals into a concise analyst-style threat brief.
-</p>
-
-<div class="demo-panel">
-
-<button class="btn btn-primary" onclick="generateBrief()">Generate Demo Brief</button>
-
-<button class="btn btn-secondary" onclick="clearBrief()">Clear</button>
-
-<div id="demo-output" class="demo-output hidden"></div>
-
-</div>
-
-</section>
-
-<div class="divider"></div>
   <div class="footer-nav">
     <a href="breachguard.html">← BreachGuard</a>
     <a href="silentfall.html">Next: SILENTFALL →</a>
   </div>
 
 </main>
+
 <script>
-
 const demoBriefs = [
-
-{
-title: "Elevated Scanning Activity Targeting Ground Station Infrastructure",
-summary: "Multiple open-source signals suggest an increase in reconnaissance activity directed at internet-exposed systems associated with satellite ground communications.",
-priority: "Medium-High",
-domain: "Ground Station / Communications Layer",
-action: "Review exposed services and monitor for follow-on activity."
-},
-
-{
-title: "Suspicious Authentication Attempts Affecting Space Support Systems",
-summary: "Emerging signals indicate repeated authentication anomalies involving infrastructure supporting satellite operations.",
-priority: "Medium",
-domain: "Mission Support Systems",
-action: "Audit authentication logs and review failed login patterns."
-},
-
-{
-title: "Potential Supply Chain Cyber Exposure",
-summary: "Recent reporting suggests a cyber incident affecting a vendor connected to satellite communications infrastructure.",
-priority: "Medium-High",
-domain: "Supply Chain / Third Party Risk",
-action: "Review vendor integrations and increase monitoring for related indicators."
-}
-
+  {
+    title: "Elevated Scanning Activity Targeting Ground Station Infrastructure",
+    summary: "Multiple open-source signals suggest an increase in reconnaissance activity directed at internet-exposed systems associated with satellite ground communications.",
+    priority: "Medium-High",
+    domain: "Ground Station / Communications Layer",
+    action: "Review exposed services and monitor for follow-on activity."
+  },
+  {
+    title: "Suspicious Authentication Attempts Affecting Space Support Systems",
+    summary: "Emerging signals indicate repeated authentication anomalies involving infrastructure supporting satellite operations.",
+    priority: "Medium",
+    domain: "Mission Support Systems",
+    action: "Audit authentication logs and review failed login patterns."
+  },
+  {
+    title: "Potential Supply Chain Cyber Exposure",
+    summary: "Recent reporting suggests a cyber incident affecting a vendor connected to satellite communications infrastructure.",
+    priority: "Medium-High",
+    domain: "Supply Chain / Third Party Risk",
+    action: "Review vendor integrations and increase monitoring for related indicators."
+  }
 ];
+
 const API_BASE = "https://space-cyber-brief-crew.onrender.com";
 
-async function loadSignals(){
-
+async function loadSignals() {
   try {
-
     const response = await fetch(`${API_BASE}/api/signals`);
-    const signals = await response.json();
+    const text = await response.text();
 
+    if (!text.trim().startsWith("[") && !text.trim().startsWith("{")) {
+      console.warn("API did not return JSON yet. Render may still be waking up.");
+      return;
+    }
+
+    const signals = JSON.parse(text);
     console.log("Live signals from API:", signals);
 
-  } catch(error){
+    const feedGrid = document.querySelector("#intel-feed .feed-grid");
+    if (!feedGrid) return;
 
+    feedGrid.innerHTML = "";
+
+    signals.slice(0, 4).forEach(signal => {
+      const card = document.createElement("div");
+      card.className = "feed-card";
+
+      card.innerHTML = `
+        <div class="feed-source">${signal.source}</div>
+        <h3>${signal.title}</h3>
+        <p>${signal.summary}</p>
+        <a href="${signal.link}" target="_blank" rel="noopener noreferrer">Read advisory</a>
+      `;
+
+      feedGrid.appendChild(card);
+    });
+
+  } catch (error) {
     console.error("Error loading signals:", error);
-
   }
-
-}
-function generateBrief(){
-
-const brief = demoBriefs[Math.floor(Math.random() * demoBriefs.length)];
-
-const output = document.getElementById("demo-output");
-
-output.classList.remove("hidden");
-
-output.innerHTML = `
-<h3>${brief.title}</h3>
-<p>${brief.summary}</p>
-<ul>
-<li><strong>Priority:</strong> ${brief.priority}</li>
-<li><strong>Affected Domain:</strong> ${brief.domain}</li>
-<li><strong>Recommended Action:</strong> ${brief.action}</li>
-</ul>
-`;
-
 }
 
-function clearBrief(){
-
-const output = document.getElementById("demo-output");
-
-output.classList.add("hidden");
-
-output.innerHTML = "";
-
-}
-  const API_BASE = "https://space-cyber-brief-crew.onrender.com";
-
-async function loadSignals(){
-
-  try {
-
-    const response = await fetch(`${API_BASE}/api/signals`);
-    const signals = await response.json();
-
-    console.log("Live signals:", signals);
-
-  } catch(error){
-
-    console.error("API error:", error);
-
-  }
-
-}
-function generateBrief(){
-  // your existing code stays here
-}
-
-function clearBrief(){
-
+function generateBrief() {
+  const brief = demoBriefs[Math.floor(Math.random() * demoBriefs.length)];
   const output = document.getElementById("demo-output");
 
-  output.classList.add("hidden");
-
-  output.innerHTML = "";
-
+  output.classList.remove("hidden");
+  output.innerHTML = `
+    <h3>${brief.title}</h3>
+    <p>${brief.summary}</p>
+    <ul>
+      <li><strong>Priority:</strong> ${brief.priority}</li>
+      <li><strong>Affected Domain:</strong> ${brief.domain}</li>
+      <li><strong>Recommended Action:</strong> ${brief.action}</li>
+    </ul>
+  `;
 }
 
+function clearBrief() {
+  const output = document.getElementById("demo-output");
+  output.classList.add("hidden");
+  output.innerHTML = "";
+}
 
 loadSignals();
 </script>
