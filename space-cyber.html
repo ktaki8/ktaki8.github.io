@@ -864,33 +864,32 @@ h1 span{
 
 <script>
 
+const API_BASE = "https://space-cyber-brief-crew.onrender.com";
+
+let liveSignals = [];
+let apiReady = false;
+let apiFetching = false;
+
 const demoBriefs = [
   {
     title: "Elevated Scanning Activity Targeting Ground Station Infrastructure",
     summary: "Multiple open-source signals suggest an increase in reconnaissance activity directed at internet-exposed systems associated with satellite ground communications.",
-    priority: "Medium-High",
-    domain: "Ground Station / Communications Layer",
-    action: "Review exposed services and monitor for follow-on activity."
+    source: "Demo Data",
+    link: null
   },
   {
     title: "Suspicious Authentication Attempts Affecting Space Support Systems",
     summary: "Emerging signals indicate repeated authentication anomalies involving infrastructure supporting satellite operations.",
-    priority: "Medium",
-    domain: "Mission Support Systems",
-    action: "Audit authentication logs and review failed login patterns."
+    source: "Demo Data",
+    link: null
   },
   {
     title: "Potential Supply Chain Cyber Exposure",
     summary: "Recent reporting suggests a cyber incident affecting a vendor connected to satellite communications infrastructure.",
-    priority: "Medium-High",
-    domain: "Supply Chain / Third Party Risk",
-    action: "Review vendor integrations and increase monitoring for related indicators."
+    source: "Demo Data",
+    link: null
   }
 ];
-
-const API_BASE = "https://space-cyber-brief-crew.onrender.com";
-
-let liveSignals = [];
 
 const priorityLevels = ["Medium", "Medium-High", "High"];
 const domains = [
@@ -908,82 +907,58 @@ const actions = [
   "Cross-reference with internal asset inventory and escalate if overlap detected."
 ];
 
-async function loadSignals() {
-  try {
-    const response = await fetch(`${API_BASE}/api/signals`);
-    const text = await response.text();
-
-    if (!text.trim().startsWith("[") && !text.trim().startsWith("{")) {
-      console.warn("API did not return JSON yet. Render may still be waking up.");
-      return;
-    }
-
-    const signals = JSON.parse(text);
-    console.log("Live signals from API:", signals);
-
-    liveSignals = signals;
-
-    const feedGrid = document.querySelector("#intel-feed .feed-grid");
-    if (!feedGrid) return;
-
-    feedGrid.innerHTML = "";
-
-    signals.slice(0, 4).forEach(signal => {
-      const card = document.createElement("div");
-      card.className = "feed-card";
-
-      card.innerHTML = `
-        <div class="feed-source">${signal.source}</div>
-        <h3>${signal.title}</h3>
-        <p>${signal.summary}</p>
-        <a href="${signal.link}" target="_blank" rel="noopener noreferrer">Read advisory</a>
-      `;
-
-      feedGrid.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Error loading signals:", error);
-  }
-}
-
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function generateBrief() {
-  const output = document.getElementById("demo-output");
-  const now = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC";
+async function fetchSignals() {
+  const response = await fetch(`${API_BASE}/api/signals`);
+  const text = await response.text();
 
-  let title, summary, source, link;
-
-  if (liveSignals.length > 0) {
-    const signal = pickRandom(liveSignals);
-    title = signal.title;
-    summary = signal.summary;
-    source = signal.source || "OSINT Feed";
-    link = signal.link || null;
-  } else {
-    const fallback = pickRandom(demoBriefs);
-    title = fallback.title;
-    summary = fallback.summary;
-    source = "Demo Data";
-    link = null;
+  if (!text.trim().startsWith("[") && !text.trim().startsWith("{")) {
+    throw new Error("API did not return JSON. Render may still be waking up.");
   }
 
+  return JSON.parse(text);
+}
+
+function renderFeedGrid(signals) {
+  const feedGrid = document.querySelector("#intel-feed .feed-grid");
+  if (!feedGrid) return;
+
+  feedGrid.innerHTML = "";
+
+  signals.slice(0, 4).forEach(signal => {
+    const card = document.createElement("div");
+    card.className = "feed-card";
+    card.innerHTML = `
+      <div class="feed-source">${signal.source}</div>
+      <h3>${signal.title}</h3>
+      <p>${signal.summary}</p>
+      <a href="${signal.link}" target="_blank" rel="noopener noreferrer">Read advisory</a>
+    `;
+    feedGrid.appendChild(card);
+  });
+}
+
+function renderBrief(signal, isLive) {
+  const output = document.getElementById("demo-output");
+  const now = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC";
   const priority = pickRandom(priorityLevels);
   const domain = pickRandom(domains);
   const action = pickRandom(actions);
+  const source = signal.source || "OSINT Feed";
+  const link = signal.link || null;
 
   output.classList.remove("hidden");
   output.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
-      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:rgba(0,201,167,0.12);border:1px solid rgba(0,201,167,0.3);color:var(--cool);">${liveSignals.length > 0 ? '● LIVE SIGNAL' : '⚠ DEMO DATA'}</span>
+      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:${isLive ? 'rgba(0,201,167,0.12)' : 'rgba(255,179,71,0.12)'};border:1px solid ${isLive ? 'rgba(0,201,167,0.3)' : 'rgba(255,179,71,0.3)'};color:${isLive ? 'var(--cool)' : 'var(--accent2)'};">${isLive ? '● LIVE SIGNAL' : '⚠ DEMO DATA'}</span>
       <span style="font-family:var(--mono);font-size:11px;color:var(--muted);">${now}</span>
     </div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">Source: ${source}</div>
-    <h3>${title}</h3>
-    <p>${summary}</p>
+    <h3>${signal.title}</h3>
+    <p>${signal.summary}</p>
     <ul>
       <li><strong>Priority:</strong> ${priority}</li>
       <li><strong>Affected Domain:</strong> ${domain}</li>
@@ -993,12 +968,62 @@ function generateBrief() {
   `;
 }
 
+async function loadSignals() {
+  try {
+    const signals = await fetchSignals();
+    liveSignals = signals;
+    apiReady = true;
+    console.log("Live signals loaded:", signals.length);
+    renderFeedGrid(signals);
+  } catch (error) {
+    console.error("Error loading signals on page load:", error);
+  }
+}
+
+async function generateBrief() {
+  const output = document.getElementById("demo-output");
+  const btn = document.querySelector("#prototype-demo .btn-primary");
+
+  // If we already have live signals cached, use them immediately
+  if (apiReady && liveSignals.length > 0) {
+    renderBrief(pickRandom(liveSignals), true);
+    return;
+  }
+
+  // Otherwise, fetch live data right now on click
+  output.classList.remove("hidden");
+  output.innerHTML = `
+    <div style="text-align:center;padding:30px 0;">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:10px;letter-spacing:.06em;">● FETCHING LIVE SIGNALS...</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;">Connecting to intelligence API.<br>First request may take 30–60s if the server is cold-starting.</div>
+    </div>
+  `;
+  btn.style.pointerEvents = "none";
+  btn.style.opacity = "0.5";
+
+  try {
+    const signals = await fetchSignals();
+    liveSignals = signals;
+    apiReady = true;
+    console.log("Live signals fetched on click:", signals.length);
+    renderFeedGrid(signals);
+    renderBrief(pickRandom(signals), true);
+  } catch (error) {
+    console.error("API fetch failed on click:", error);
+    renderBrief(pickRandom(demoBriefs), false);
+  } finally {
+    btn.style.pointerEvents = "";
+    btn.style.opacity = "";
+  }
+}
+
 function clearBrief() {
   const output = document.getElementById("demo-output");
   output.classList.add("hidden");
   output.innerHTML = "";
 }
 
+// Start pre-fetching on page load (warms up Render)
 loadSignals();
 
 </script>
