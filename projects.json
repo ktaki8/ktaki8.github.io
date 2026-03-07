@@ -1,6 +1,6 @@
 [
   {
-    "title": "BreachGuard: Password Aggregator & Policy Analyzer",
+    "title": "BreachGuard: Password Aggregator & Policy Analyzer TEST",
     "description": "Privacy-first password risk engine that evaluates real-world cracking exposure using k-anonymity breach checks, entropy-based risk estimation, and pattern heuristics that catch keyboard walks and leetspeak.",
     "tags": ["detection", "ai-privacy"],
     "badges": ["Python", "Flask", "Privacy"],
