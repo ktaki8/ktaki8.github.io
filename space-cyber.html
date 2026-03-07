@@ -890,6 +890,24 @@ const demoBriefs = [
 
 const API_BASE = "https://space-cyber-brief-crew.onrender.com";
 
+let liveSignals = [];
+
+const priorityLevels = ["Medium", "Medium-High", "High"];
+const domains = [
+  "Ground Station / Communications Layer",
+  "Mission Support Systems",
+  "Supply Chain / Third Party Risk",
+  "Satellite Command & Control",
+  "Network Perimeter / External Services"
+];
+const actions = [
+  "Review exposed services and monitor for follow-on activity.",
+  "Audit authentication logs and review failed login patterns.",
+  "Review vendor integrations and increase monitoring for related indicators.",
+  "Validate patching status and assess exposure to disclosed vulnerability.",
+  "Cross-reference with internal asset inventory and escalate if overlap detected."
+];
+
 async function loadSignals() {
   try {
     const response = await fetch(`${API_BASE}/api/signals`);
@@ -902,6 +920,8 @@ async function loadSignals() {
 
     const signals = JSON.parse(text);
     console.log("Live signals from API:", signals);
+
+    liveSignals = signals;
 
     const feedGrid = document.querySelector("#intel-feed .feed-grid");
     if (!feedGrid) return;
@@ -927,19 +947,49 @@ async function loadSignals() {
   }
 }
 
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function generateBrief() {
-  const brief = demoBriefs[Math.floor(Math.random() * demoBriefs.length)];
   const output = document.getElementById("demo-output");
+  const now = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC";
+
+  let title, summary, source, link;
+
+  if (liveSignals.length > 0) {
+    const signal = pickRandom(liveSignals);
+    title = signal.title;
+    summary = signal.summary;
+    source = signal.source || "OSINT Feed";
+    link = signal.link || null;
+  } else {
+    const fallback = pickRandom(demoBriefs);
+    title = fallback.title;
+    summary = fallback.summary;
+    source = "Demo Data";
+    link = null;
+  }
+
+  const priority = pickRandom(priorityLevels);
+  const domain = pickRandom(domains);
+  const action = pickRandom(actions);
 
   output.classList.remove("hidden");
   output.innerHTML = `
-    <h3>${brief.title}</h3>
-    <p>${brief.summary}</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:rgba(0,201,167,0.12);border:1px solid rgba(0,201,167,0.3);color:var(--cool);">${liveSignals.length > 0 ? '● LIVE SIGNAL' : '⚠ DEMO DATA'}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted);">${now}</span>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">Source: ${source}</div>
+    <h3>${title}</h3>
+    <p>${summary}</p>
     <ul>
-      <li><strong>Priority:</strong> ${brief.priority}</li>
-      <li><strong>Affected Domain:</strong> ${brief.domain}</li>
-      <li><strong>Recommended Action:</strong> ${brief.action}</li>
+      <li><strong>Priority:</strong> ${priority}</li>
+      <li><strong>Affected Domain:</strong> ${domain}</li>
+      <li><strong>Recommended Action:</strong> ${action}</li>
     </ul>
+    ${link ? `<a href="${link}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:14px;color:var(--accent2);text-decoration:none;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;">View Original Advisory →</a>` : ''}
   `;
 }
 
