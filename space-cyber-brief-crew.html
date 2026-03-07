@@ -526,7 +526,47 @@ h1 span{
     gap:18px;
   }
 }
+.demo-panel{
+  background:linear-gradient(180deg, rgba(17,24,32,0.98), rgba(10,15,22,0.98));
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:26px;
+}
 
+.demo-output{
+  margin-top:22px;
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:rgba(255,255,255,0.02);
+}
+
+.demo-output h3{
+  font-size:22px;
+  margin-bottom:12px;
+  color:var(--text);
+}
+
+.demo-output p{
+  color:#b7c3d1;
+  line-height:1.85;
+  margin-bottom:14px;
+  font-size:15px;
+}
+
+.demo-output ul{
+  padding-left:20px;
+}
+
+.demo-output li{
+  color:#b7c3d1;
+  line-height:1.8;
+  font-size:15px;
+}
+
+.hidden{
+  display:none;
+}
 </style>
 
 </head>
@@ -713,12 +753,93 @@ h1 span{
     </div>
   </section>
 
+    <section class="section" id="prototype-demo">
+
+<div class="section-label">// Try the Prototype</div>
+
+<p class="prose">
+This interactive demo simulates how Space Cyber Crew transforms incoming cyber risk signals into a concise analyst-style threat brief.
+</p>
+
+<div class="demo-panel">
+
+<button class="btn btn-primary" onclick="generateBrief()">Generate Demo Brief</button>
+
+<button class="btn btn-secondary" onclick="clearBrief()">Clear</button>
+
+<div id="demo-output" class="demo-output hidden"></div>
+
+</div>
+
+</section>
+
+<div class="divider"></div>
   <div class="footer-nav">
     <a href="breachguard.html">← BreachGuard</a>
     <a href="silentfall.html">Next: SILENTFALL →</a>
   </div>
 
 </main>
+<script>
 
+const demoBriefs = [
+
+{
+title: "Elevated Scanning Activity Targeting Ground Station Infrastructure",
+summary: "Multiple open-source signals suggest an increase in reconnaissance activity directed at internet-exposed systems associated with satellite ground communications.",
+priority: "Medium-High",
+domain: "Ground Station / Communications Layer",
+action: "Review exposed services and monitor for follow-on activity."
+},
+
+{
+title: "Suspicious Authentication Attempts Affecting Space Support Systems",
+summary: "Emerging signals indicate repeated authentication anomalies involving infrastructure supporting satellite operations.",
+priority: "Medium",
+domain: "Mission Support Systems",
+action: "Audit authentication logs and review failed login patterns."
+},
+
+{
+title: "Potential Supply Chain Cyber Exposure",
+summary: "Recent reporting suggests a cyber incident affecting a vendor connected to satellite communications infrastructure.",
+priority: "Medium-High",
+domain: "Supply Chain / Third Party Risk",
+action: "Review vendor integrations and increase monitoring for related indicators."
+}
+
+];
+
+function generateBrief(){
+
+const brief = demoBriefs[Math.floor(Math.random() * demoBriefs.length)];
+
+const output = document.getElementById("demo-output");
+
+output.classList.remove("hidden");
+
+output.innerHTML = `
+<h3>${brief.title}</h3>
+<p>${brief.summary}</p>
+<ul>
+<li><strong>Priority:</strong> ${brief.priority}</li>
+<li><strong>Affected Domain:</strong> ${brief.domain}</li>
+<li><strong>Recommended Action:</strong> ${brief.action}</li>
+</ul>
+`;
+
+}
+
+function clearBrief(){
+
+const output = document.getElementById("demo-output");
+
+output.classList.add("hidden");
+
+output.innerHTML = "";
+
+}
+
+</script>
 </body>
 </html>
