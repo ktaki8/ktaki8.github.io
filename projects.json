@@ -44,4 +44,13 @@
     "link": "blastmap.html",
     "writeup": ""
   }
+{
+  "title": "Space Cyber Brief Crew",
+  "description": "AI-powered multi-agent cyber threat intelligence pipeline that collects OSINT signals, analyzes cyber risks, and generates structured threat intelligence briefs related to space systems and critical infrastructure.",
+  "tags": ["threat-intel", "ai-agents"],
+  "badges": ["Python", "CrewAI", "OSINT", "Space Security"],
+  "repo": "https://github.com/ktaki8/space-cyber-brief-crew",
+  "link": "",
+  "writeup": ""
+}
 ]
