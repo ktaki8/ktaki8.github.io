@@ -933,6 +933,39 @@ output.classList.add("hidden");
 output.innerHTML = "";
 
 }
+  const API_BASE = "https://space-cyber-brief-crew.onrender.com";
+
+async function loadSignals(){
+
+  try {
+
+    const response = await fetch(`${API_BASE}/api/signals`);
+    const signals = await response.json();
+
+    console.log("Live signals:", signals);
+
+  } catch(error){
+
+    console.error("API error:", error);
+
+  }
+
+}
+function generateBrief(){
+  // your existing code stays here
+}
+
+function clearBrief(){
+
+  const output = document.getElementById("demo-output");
+
+  output.classList.add("hidden");
+
+  output.innerHTML = "";
+
+}
+
+
 loadSignals();
 </script>
 </body>
