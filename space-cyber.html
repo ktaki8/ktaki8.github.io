@@ -1,417 +1,333 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BreachGuard — Khadija Taki</title>
+
+<title>Space Cyber Crew — Khadija Taki</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
 
-:root {
+:root{
 
---bg: #080b10;
---bg2: #0d1117;
---surface: #111820;
---border: #1e2a38;
+--bg:#080b10;
+--surface:#111820;
+--border:#1e2a38;
 
-/* UPDATED COLOR */
---accent: #ff2e88;
+--accent:#ff2e88;
+--accent2:#ffb347;
+--cool:#00c9a7;
 
---accent2: #ffb347;
---cool: #00c9a7;
+--text:#e8edf3;
+--muted:#5a6a7e;
 
---text: #e8edf3;
---muted: #5a6a7e;
-
---mono: 'IBM Plex Mono', monospace;
---display: 'Syne', sans-serif;
---serif: 'Instrument Serif', serif;
+--mono:'IBM Plex Mono', monospace;
+--display:'Syne', sans-serif;
+--serif:'Instrument Serif', serif;
 
 }
 
-*, *::before, *::after {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
-body {
+body{
 
-background: var(--bg);
-color: var(--text);
-font-family: var(--display);
-min-height: 100vh;
-overflow-x: hidden;
+background:var(--bg);
+color:var(--text);
+font-family:var(--display);
+min-height:100vh;
+overflow-x:hidden;
 
 }
 
-body::before {
+body::before{
 
-content: '';
-position: fixed;
-inset: 0;
+content:'';
+position:fixed;
+inset:0;
 
 background-image:
-linear-gradient(rgba(255,46,136,0.025) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,46,136,0.025) 1px, transparent 1px);
+linear-gradient(rgba(255,46,136,0.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,46,136,0.025) 1px,transparent 1px);
 
-background-size: 60px 60px;
-
-pointer-events: none;
-z-index: 0;
-
-}
-
-nav {
-
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-
-z-index: 100;
-
-padding: 20px 48px;
-
-display: flex;
-justify-content: space-between;
-align-items: center;
-
-background: rgba(8,11,16,0.85);
-backdrop-filter: blur(12px);
-
-border-bottom: 1px solid var(--border);
+background-size:60px 60px;
+pointer-events:none;
+z-index:0;
 
 }
 
-.nav-logo {
+nav{
 
-font-family: var(--mono);
-font-size: 13px;
+position:fixed;
+top:0;
+left:0;
+right:0;
 
-color: var(--accent);
+z-index:100;
 
-text-decoration: none;
-letter-spacing: 0.05em;
+padding:20px 48px;
 
-}
+display:flex;
+justify-content:space-between;
+align-items:center;
 
-.nav-back {
+background:rgba(8,11,16,0.85);
+backdrop-filter:blur(12px);
 
-font-family: var(--mono);
-font-size: 12px;
-
-color: var(--muted);
-text-decoration: none;
-
-letter-spacing: 0.08em;
-
-transition: color 0.2s;
+border-bottom:1px solid var(--border);
 
 }
 
-.nav-back:hover {
-color: var(--text);
-}
+.nav-logo{
 
-main {
+font-family:var(--mono);
+font-size:13px;
 
-position: relative;
-z-index: 1;
+color:var(--accent);
 
-max-width: 960px;
-margin: 0 auto;
-
-padding: 140px 48px 100px;
+text-decoration:none;
+letter-spacing:.05em;
 
 }
 
-.tag-row {
+.nav-back{
 
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
+font-family:var(--mono);
+font-size:12px;
 
-margin-bottom: 32px;
+color:var(--muted);
+text-decoration:none;
 
-opacity: 0;
-animation: fadeUp 0.6s ease 0.1s forwards;
-
-}
-
-.tag {
-
-font-family: var(--mono);
-font-size: 11px;
-
-letter-spacing: 0.1em;
-
-padding: 5px 12px;
-
-border-radius: 2px;
-
-text-transform: uppercase;
+letter-spacing:.08em;
 
 }
 
-.tag-orange {
-background: rgba(255,46,136,0.1);
-color: var(--accent);
-border: 1px solid rgba(255,46,136,0.25);
+.nav-back:hover{
+color:var(--text)
 }
 
-.tag-yellow {
-background: rgba(255,179,71,0.1);
-color: var(--accent2);
-border: 1px solid rgba(255,179,71,0.25);
-}
+main{
 
-.tag-green {
-background: rgba(0,201,167,0.1);
-color: var(--cool);
-border: 1px solid rgba(0,201,167,0.25);
-}
+position:relative;
+z-index:1;
 
-h1 {
+max-width:960px;
+margin:auto;
 
-font-family: var(--display);
-font-size: clamp(52px, 8vw, 88px);
-
-font-weight: 800;
-
-line-height: 0.95;
-letter-spacing: -0.03em;
-
-margin-bottom: 24px;
-
-opacity: 0;
-animation: fadeUp 0.7s ease 0.2s forwards;
+padding:140px 48px 100px;
 
 }
 
-h1 span {
+.tag-row{
 
-color: var(--accent);
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 
-font-family: var(--serif);
-font-style: italic;
-font-weight: 400;
-
-}
-
-.subtitle {
-
-font-family: var(--mono);
-font-size: 14px;
-
-color: var(--muted);
-
-line-height: 1.8;
-
-max-width: 620px;
-margin-bottom: 64px;
-
-opacity: 0;
-animation: fadeUp 0.7s ease 0.3s forwards;
+margin-bottom:32px;
 
 }
 
-.stat-row {
+.tag{
 
-display: grid;
-grid-template-columns: repeat(3,1fr);
+font-family:var(--mono);
+font-size:11px;
 
-gap: 2px;
+letter-spacing:.1em;
 
-margin-bottom: 56px;
+padding:5px 12px;
 
-opacity: 0;
-animation: fadeUp 0.7s ease 0.4s forwards;
+border-radius:2px;
 
-}
-
-.stat-cell {
-
-background: var(--surface);
-border: 1px solid var(--border);
-
-padding: 32px;
-
-text-align: center;
+text-transform:uppercase;
 
 }
 
-.stat-cell:first-child { border-radius: 8px 0 0 8px; }
-.stat-cell:last-child { border-radius: 0 8px 8px 0; }
+.tag-orange{
+background:rgba(255,46,136,0.1);
+color:var(--accent);
+border:1px solid rgba(255,46,136,0.3);
+}
 
-.stat-num {
+.tag-yellow{
+background:rgba(255,179,71,0.1);
+color:var(--accent2);
+border:1px solid rgba(255,179,71,0.3);
+}
 
-font-size: 48px;
-font-weight: 800;
+.tag-green{
+background:rgba(0,201,167,0.1);
+color:var(--cool);
+border:1px solid rgba(0,201,167,0.3);
+}
 
-color: var(--accent);
+h1{
 
-line-height: 1;
-margin-bottom: 8px;
+font-size:clamp(52px,8vw,88px);
+font-weight:800;
+
+line-height:.95;
+letter-spacing:-.03em;
+
+margin-bottom:24px;
 
 }
 
-.stat-label {
+h1 span{
 
-font-family: var(--mono);
-font-size: 12px;
+color:var(--accent);
 
-color: var(--muted);
-
-text-transform: uppercase;
-letter-spacing: 0.08em;
+font-family:var(--serif);
+font-style:italic;
+font-weight:400;
 
 }
 
-.divider {
+.subtitle{
 
-width: 100%;
-height: 1px;
+font-family:var(--mono);
+font-size:14px;
 
-background: var(--border);
+color:var(--muted);
 
-margin: 56px 0;
+line-height:1.8;
 
-}
-
-.section-label {
-
-font-family: var(--mono);
-font-size: 11px;
-
-letter-spacing: 0.15em;
-
-text-transform: uppercase;
-
-color: var(--accent);
-
-margin-bottom: 20px;
+max-width:620px;
+margin-bottom:64px;
 
 }
 
-.prose {
+.stat-row{
 
-font-size: 17px;
-line-height: 1.85;
+display:grid;
+grid-template-columns:repeat(3,1fr);
 
-color: #b0bcc9;
-
-margin-bottom: 24px;
-
-}
-
-.prose strong {
-
-color: var(--text);
-font-weight: 600;
+gap:2px;
+margin-bottom:56px;
 
 }
 
-.highlight-block {
+.stat-cell{
 
-background: linear-gradient(
-135deg,
-rgba(255,46,136,0.06),
-rgba(255,179,71,0.04)
-);
+background:var(--surface);
+border:1px solid var(--border);
 
-border: 1px solid rgba(255,46,136,0.2);
-
-border-radius: 8px;
-
-padding: 32px 36px;
-margin: 40px 0;
-
-position: relative;
-overflow: hidden;
+padding:32px;
+text-align:center;
 
 }
 
-.highlight-block::before {
+.stat-cell:first-child{border-radius:8px 0 0 8px}
+.stat-cell:last-child{border-radius:0 8px 8px 0}
 
-content: '';
-position: absolute;
+.stat-num{
 
-left: 0;
-top: 0;
-bottom: 0;
+font-size:48px;
+font-weight:800;
 
-width: 3px;
+color:var(--accent);
 
-background: linear-gradient(
-to bottom,
-var(--accent),
-var(--accent2)
-);
+margin-bottom:8px;
 
 }
 
-.footer-nav {
+.stat-label{
 
-display: flex;
-justify-content: space-between;
-align-items: center;
+font-family:var(--mono);
+font-size:12px;
 
-padding-top: 56px;
+color:var(--muted);
 
-border-top: 1px solid var(--border);
-margin-top: 80px;
-
-}
-
-.footer-nav a {
-
-font-family: var(--mono);
-font-size: 13px;
-
-color: var(--muted);
-text-decoration: none;
-
-transition: color 0.2s;
+text-transform:uppercase;
+letter-spacing:.08em;
 
 }
 
-.footer-nav a:hover {
+.divider{
 
-color: var(--accent);
+width:100%;
+height:1px;
 
-}
+background:var(--border);
 
-@keyframes fadeUp {
-
-from {
-opacity: 0;
-transform: translateY(20px);
-}
-
-to {
-opacity: 1;
-transform: translateY(0);
-}
+margin:56px 0;
 
 }
 
-@media (max-width:640px){
+.section-label{
 
-nav { padding:16px 24px; }
-main { padding:100px 24px 80px; }
+font-family:var(--mono);
+font-size:11px;
 
-.stat-row {
-grid-template-columns:1fr;
+letter-spacing:.15em;
+
+text-transform:uppercase;
+
+color:var(--accent);
+
+margin-bottom:20px;
+
 }
 
-h1 { font-size:48px; }
+.prose{
 
+font-size:17px;
+line-height:1.8;
+
+color:#b0bcc9;
+margin-bottom:20px;
+
+}
+
+.highlight{
+
+background:rgba(255,46,136,0.07);
+border-left:3px solid var(--accent);
+
+padding:24px 28px;
+border-radius:6px;
+
+font-family:var(--serif);
+font-style:italic;
+
+color:var(--text);
+
+margin:30px 0;
+
+}
+
+.footer-nav{
+
+display:flex;
+justify-content:space-between;
+
+border-top:1px solid var(--border);
+
+padding-top:40px;
+margin-top:80px;
+
+}
+
+.footer-nav a{
+
+font-family:var(--mono);
+font-size:13px;
+
+color:var(--muted);
+text-decoration:none;
+
+}
+
+.footer-nav a:hover{
+color:var(--accent)
 }
 
 </style>
+
 </head>
 
 <body>
@@ -425,38 +341,73 @@ h1 { font-size:48px; }
 
 <div class="tag-row">
 
-<span class="tag tag-orange">Python</span>
-<span class="tag tag-yellow">Privacy Engineering</span>
-<span class="tag tag-green">Risk Modeling</span>
-<span class="tag tag-orange">CISA KEV</span>
+<span class="tag tag-orange">AI Agents</span>
+<span class="tag tag-yellow">Threat Intelligence</span>
+<span class="tag tag-green">OSINT</span>
+<span class="tag tag-orange">Space Security</span>
 
 </div>
 
-<h1>Breach<span>Guard</span></h1>
+<h1>Space Cyber <span>Crew</span></h1>
 
 <p class="subtitle">
 
-Credential breach aggregation and policy analysis system with entropy-based
-risk scoring — reducing manual credential review overhead by approximately 40%.
+AI-powered multi-agent cyber threat intelligence pipeline that collects OSINT signals, analyzes cyber risks, and generates structured threat intelligence briefs related to space systems and critical infrastructure.
 
 </p>
 
 <div class="stat-row">
 
 <div class="stat-cell">
-<div class="stat-num">~40%</div>
-<div class="stat-label">Reduction in manual review</div>
-</div>
-
-<div class="stat-cell">
-<div class="stat-num">2</div>
-<div class="stat-label">Live threat intel APIs</div>
+<div class="stat-num">5+</div>
+<div class="stat-label">OSINT data sources</div>
 </div>
 
 <div class="stat-cell">
 <div class="stat-num">3</div>
-<div class="stat-label">Risk scoring dimensions</div>
+<div class="stat-label">AI agents</div>
 </div>
+
+<div class="stat-cell">
+<div class="stat-num">24/7</div>
+<div class="stat-label">Signal monitoring</div>
+</div>
+
+</div>
+
+<div class="divider"></div>
+
+<div class="section-label">// Overview</div>
+
+<p class="prose">
+
+Space Cyber Crew simulates an automated cyber threat intelligence pipeline focused on emerging risks affecting satellite infrastructure, ground stations, and critical communications systems.
+
+</p>
+
+<p class="prose">
+
+The system deploys multiple AI agents built with CrewAI to collect open-source intelligence, monitor cyber activity related to space infrastructure, and generate structured threat intelligence briefs that support analyst decision-making.
+
+</p>
+
+<p class="prose">
+
+By combining OSINT signals with automated analysis, the project explores how AI agents can assist cybersecurity teams in detecting early indicators of cyber threats targeting space systems and national infrastructure.
+
+</p>
+
+<div class="highlight">
+
+"Space cyber defense requires faster signal detection, smarter prioritization, and analyst-ready intelligence before weak signals escalate into mission-level risks."
+
+</div>
+
+<div class="footer-nav">
+
+<a href="breachguard.html">← BreachGuard</a>
+
+<a href="silentfall.html">Next: SILENTFALL →</a>
 
 </div>
 
