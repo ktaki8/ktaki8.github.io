@@ -9,6 +9,15 @@
     "writeup": ""
   },
   {
+"title": "Space Cyber Brief",
+"description": "AI-powered multi-agent cyber threat intelligence pipeline that collects OSINT signals, analyzes cyber risks, and generates structured threat intelligence briefs related to space systems and critical infrastructure.",
+"tags": ["threat-intel", "ai-agents"],
+"badges": ["Python", "CrewAI", "OSINT", "Space Security"],
+"repo": "https://github.com/ktaki8/space-cyber-brief-crew",
+"link": "https://github.com/ktaki8/space-cyber-brief-crew",
+"writeup": ""
+},
+  {
     "title": "Speaker: Cybersecurity Stronger Together 2026 (GWU)",
     "description": "Delivered remarks on how higher education bridges technical expertise, policy leadership, and cross-sector collaboration across academia, industry, and government to strengthen national cyber resilience.",
     "tags": ["policy"],
