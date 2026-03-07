@@ -50,7 +50,7 @@
   "tags": ["threat-intel", "ai-agents"],
   "badges": ["Python", "CrewAI", "OSINT", "Space Security"],
   "repo": "https://github.com/ktaki8/space-cyber-brief-crew",
-  "link": "",
+  "link": "https://github.com/ktaki8/space-cyber-brief-crew",
   "writeup": ""
 }
 ]
