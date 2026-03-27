@@ -62,4 +62,13 @@
   "link": "https://github.com/ktaki8/space-cyber-brief-crew",
   "writeup": ""
 },
+  ,{
+    "title": "Time-Aware Malware",
+    "description": "Threat intelligence brief analyzing conditional execution malware with MITRE ATT&CK mapping and geopolitical conflict context.",
+    "tags": ["threat-intelligence", "MITRE-ATT&CK"],
+    "badges": ["SILENTFALL", "MITRE ATT&CK", "Policy"],
+    "repo": "",
+    "link": "time_aware_malware.html",
+    "writeup": ""
+  }
 ]
