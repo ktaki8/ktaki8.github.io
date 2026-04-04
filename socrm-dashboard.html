@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOCRM Dashboard | Khadija Taki</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0e17; font-family: 'JetBrains Mono', monospace; }
+  #root { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const MISSION_TYPES = [
+  { id: "lunar_crewed", label: "Crewed Lunar Mission", icon: "🌙" },
+  { id: "lunar_robotic", label: "Robotic Lunar", icon: "🤖" },
+  { id: "leo_station", label: "LEO Space Station", icon: "🛰️" },
+  { id: "deep_space", label: "Deep Space Probe", icon: "🪐" },
+];
+
+const COMM_TYPES = [
+  { id: "optical_only", label: "Optical Only" },
+  { id: "rf_only", label: "RF Only" },
+  { id: "hybrid", label: "Hybrid (RF + Optical)" },
+];
+
+const ENVIRONMENTS = [
+  { id: "leo", label: "LEO", riskMod: 0.7 },
+  { id: "meo_geo", label: "MEO / GEO", riskMod: 0.85 },
+  { id: "cislunar", label: "Cislunar", riskMod: 1.0 },
+  { id: "deep_space", label: "Deep Space", riskMod: 1.15 },
+];
+
+const AUTONOMY_LEVELS = [
+  { id: "manual", label: "Manual (Human-in-loop)", riskMod: 0.8 },
+  { id: "assisted", label: "AI-Assisted", riskMod: 1.0 },
+  { id: "autonomous", label: "Fully Autonomous", riskMod: 1.25 },
+];
+
+const ENCRYPTION_LEVELS = [
+  { id: "standard", label: "Standard (AES-256)", riskMod: 1.0 },
+  { id: "pqc", label: "Post-Quantum Crypto", riskMod: 0.7 },
+  { id: "qkd", label: "QKD-Enabled", riskMod: 0.4 },
+  { id: "none", label: "None / Legacy", riskMod: 1.6 },
+];
+
+const GROUND_TRUST = [
+  { id: "high", label: "High (SCIF-level)", riskMod: 0.6 },
+  { id: "moderate", label: "Moderate (Commercial)", riskMod: 1.0 },
+  { id: "low", label: "Low (Shared / Allied)", riskMod: 1.3 },
+  { id: "untrusted", label: "Untrusted / Contested", riskMod: 1.7 },
+];
+
+const THREATS = [
+  { id:"interception", name:"Signal Interception", icon:"👁️", rfBase:0.85, optBase:0.15,
+    desc:"Unauthorized capture of data in transit between space and ground segments.",
+    rfDetail:"RF signals broadcast omnidirectionally, enabling passive interception with commodity antennas from wide geographic areas.",
+    optDetail:"Optical beams have sub-arcsecond divergence. Interception requires physical placement in the beam path, extraordinarily difficult in space.",
+    mitigations:["End-to-end encryption (AES-256-GCM minimum)","Quantum key distribution for high-value links","Frequency hopping for RF backup channels","Beam monitoring and intrusion detection"],
+    nist:["SC-8","SC-12","SC-13","SC-28"], atlas:"AML.T0024" },
+  { id:"jamming", name:"Communication Jamming", icon:"📡", rfBase:0.80, optBase:0.25,
+    desc:"Deliberate interference to deny or degrade communication links.",
+    rfDetail:"RF jamming is mature and operationally demonstrated. Broadband noise, spot, and smart jamming techniques are well-documented.",
+    optDetail:"Optical jamming requires precise beam alignment or high-power laser sources aimed at receiver optics.",
+    mitigations:["Anti-jam waveforms for RF backup","Adaptive optics and spatial filtering","Multi-path redundancy (RF + optical)","Spread spectrum techniques"],
+    nist:["SC-5","CP-8","SC-7","CP-2"], atlas:"AML.T0029" },
+  { id:"spoofing", name:"Signal Spoofing", icon:"🎭", rfBase:0.70, optBase:0.20,
+    desc:"Injection of false signals to deceive receivers into accepting fraudulent data or commands.",
+    rfDetail:"RF spoofing leverages the broadcast nature of RF signals. GPS spoofing is operationally demonstrated.",
+    optDetail:"Optical spoofing requires replicating precise wavelength, modulation, and spatial characteristics of the legitimate beam.",
+    mitigations:["Cryptographic authentication of all commands","Signal fingerprinting and anomaly detection","Challenge-response protocols","Multi-factor signal verification"],
+    nist:["SC-23","IA-3","SC-8","SI-4"], atlas:"AML.T0015" },
+  { id:"endpoint", name:"Endpoint Compromise", icon:"💻", rfBase:0.65, optBase:0.60,
+    desc:"Unauthorized access to spacecraft or ground terminal computing systems.",
+    rfDetail:"RF ground stations are networked endpoints with standard IT attack surfaces.",
+    optDetail:"Optical terminals add specialized control systems for precision pointing and adaptive optics.",
+    mitigations:["Endpoint detection and response (EDR)","Hardware security modules for key storage","Secure boot and firmware integrity","Network segmentation and zero trust"],
+    nist:["SI-3","SI-7","AC-6","CM-7"], atlas:"AML.T0040" },
+  { id:"misalignment", name:"Optical Terminal Misalignment", icon:"🎯", rfBase:0.10, optBase:0.55,
+    desc:"Disruption of precision pointing, acquisition, and tracking (PAT) systems for optical links.",
+    rfDetail:"RF systems use wide-beam antennas with generous pointing margins.",
+    optDetail:"Optical links require sub-microradian pointing accuracy. PAT system disruption causes complete link loss.",
+    mitigations:["Redundant PAT sensor systems","Inertial backup pointing modes","PAT system integrity monitoring","RF fallback for critical commands"],
+    nist:["CP-8","SI-13","CP-2","PE-1"], atlas:"AML.T0031" },
+  { id:"supply_chain", name:"Supply Chain Insertion", icon:"🔗", rfBase:0.50, optBase:0.50,
+    desc:"Compromise of hardware or software components during manufacturing or integration.",
+    rfDetail:"RF supply chains are mature but globally distributed with multiple potential insertion points.",
+    optDetail:"Optical components have specialized supply chains with fewer vendors, creating concentrated risk.",
+    mitigations:["Supply chain risk management (SCRM) program","Hardware attestation and provenance tracking","Trusted foundry for critical components","Software bill of materials (SBOM)"],
+    nist:["SR-3","SR-5","SR-6","SA-12"], atlas:"AML.T0010" },
+  { id:"key_mgmt", name:"Key Management Failure", icon:"🔑", rfBase:0.55, optBase:0.45,
+    desc:"Compromise or failure of cryptographic key generation, distribution, storage, or rotation.",
+    rfDetail:"RF systems rely on pre-loaded keys or ground-commanded key updates.",
+    optDetail:"Optical links enable potential QKD integration but current systems still depend on pre-loaded keys.",
+    mitigations:["Key management infrastructure (KMI)","Quantum key distribution readiness","Automated key rotation protocols","Hardware security modules (HSM)"],
+    nist:["SC-12","SC-17","IA-7","SC-13"], atlas:"AML.T0024" },
+  { id:"ai_manip", name:"AI Decision Manipulation", icon:"🧠", rfBase:0.40, optBase:0.40,
+    desc:"Adversarial manipulation of AI/ML systems used for autonomous decision-making.",
+    rfDetail:"AI systems managing RF spectrum allocation and link scheduling are vulnerable to adversarial inputs.",
+    optDetail:"AI-driven PAT optimization, cloud avoidance, and handover decisions introduce ML-specific attack surfaces.",
+    mitigations:["Adversarial robustness testing","Human-in-the-loop for critical decisions","Model integrity monitoring","Input validation and anomaly detection"],
+    nist:["SI-10","SI-4","CA-7","PM-16"], atlas:"AML.T0043" },
+  { id:"data_integrity", name:"Data Integrity Loss", icon:"📊", rfBase:0.60, optBase:0.30,
+    desc:"Unauthorized modification of data in transit or at rest.",
+    rfDetail:"RF links are vulnerable to man-in-the-middle attacks.",
+    optDetail:"Optical links' narrow beam makes MITM attacks extremely difficult.",
+    mitigations:["End-to-end data integrity verification (HMAC)","Blockchain-based data provenance","Forward error correction with integrity checks","Data-at-rest encryption"],
+    nist:["SI-7","SC-8","SC-28","AU-10"], atlas:"AML.T0020" },
+  { id:"ground", name:"Ground Segment Compromise", icon:"🏢", rfBase:0.75, optBase:0.65,
+    desc:"Compromise of ground station infrastructure, networks, or operations centers.",
+    rfDetail:"Ground stations are globally distributed with varying security postures across partner nations.",
+    optDetail:"Optical ground terminals at White Sands and Table Mountain are high-value, geographically concentrated targets.",
+    mitigations:["NIST CSF implementation across ground segment","Network segmentation and micro-segmentation","Continuous monitoring (SIEM/SOC)","Incident response planning with failover"],
+    nist:["AC-4","SI-4","IR-1","CA-7"], atlas:"AML.T0048" },
+];
+
+const TABS = [
+  { id:"overview", label:"Risk Overview" },
+  { id:"comparison", label:"RF vs Optical" },
+  { id:"threats", label:"Threat Details" },
+  { id:"surface", label:"Attack Surface" },
+];
+
+function score(t, cfg) {
+  const env = ENVIRONMENTS.find(e=>e.id===cfg.environment);
+  const aut = AUTONOMY_LEVELS.find(a=>a.id===cfg.autonomy);
+  const enc = ENCRYPTION_LEVELS.find(e=>e.id===cfg.encryption);
+  const gnd = GROUND_TRUST.find(g=>g.id===cfg.groundTrust);
+  let base = cfg.commType==="rf_only"?t.rfBase:cfg.commType==="optical_only"?t.optBase:(t.rfBase+t.optBase)/2;
+  return Math.min(1, Math.max(0, base*env.riskMod*aut.riskMod*enc.riskMod*gnd.riskMod));
+}
+
+function risk(s) {
+  if(s>=0.7) return {label:"CRITICAL",color:"#ef4444",bg:"rgba(239,68,68,0.12)"};
+  if(s>=0.5) return {label:"HIGH",color:"#f97316",bg:"rgba(249,115,22,0.12)"};
+  if(s>=0.3) return {label:"MODERATE",color:"#eab308",bg:"rgba(234,179,8,0.12)"};
+  return {label:"LOW",color:"#22c55e",bg:"rgba(34,197,94,0.12)"};
+}
+
+function Btn({sel,id,label,icon,onClick}){
+  const active=sel===id;
+  return <button onClick={()=>onClick(id)} style={{padding:"6px 12px",borderRadius:6,border:active?"1px solid #38bdf8":"1px solid rgba(255,255,255,0.1)",background:active?"rgba(56,189,248,0.12)":"rgba(255,255,255,0.03)",color:active?"#7dd3fc":"#94a3b8",fontSize:11,fontWeight:active?700:400,cursor:"pointer",fontFamily:"inherit"}}>{icon?icon+" ":""}{label}</button>;
+}
+
+function App() {
+  const [cfg,setCfg]=useState({missionType:"lunar_crewed",commType:"hybrid",environment:"cislunar",autonomy:"assisted",encryption:"standard",groundTrust:"moderate"});
+  const [tab,setTab]=useState("overview");
+
+  const scores=THREATS.map(t=>score(t,cfg));
+  const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+  const mx=Math.max(...scores);
+  const crit=scores.filter(s=>s>=0.7).length;
+  const high=scores.filter(s=>s>=0.5&&s<0.7).length;
+  const r=risk(avg);
+  const circ=2*Math.PI*54;
+
+  const Section=({title,children})=><div style={{marginBottom:16}}><div style={{fontSize:10,fontWeight:700,color:"#64748b",letterSpacing:"0.12em",marginBottom:8}}>{title}</div><div style={{display:"flex",flexWrap:"wrap",gap:6}}>{children}</div></div>;
+
+  return (
+    <div style={{minHeight:"100vh",background:"#0a0e17",color:"#e2e8f0",fontFamily:"'JetBrains Mono',monospace"}}>
+      {/* Header */}
+      <div style={{padding:"24px 28px",borderBottom:"1px solid rgba(255,255,255,0.06)",background:"linear-gradient(180deg,rgba(56,189,248,0.04) 0%,transparent 100%)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:4}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 8px #22c55e"}}/>
+          <div style={{fontSize:10,color:"#22c55e",letterSpacing:"0.15em",fontWeight:600}}>ACTIVE ANALYSIS</div>
+          <a href="socrm.html" style={{marginLeft:"auto",fontSize:11,color:"#64748b",textDecoration:"none"}}>← Back to Project</a>
+        </div>
+        <h1 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:"8px 0 4px",fontFamily:"'Space Grotesk',sans-serif"}}>Space Optical Communications Cyber Risk Mapper</h1>
+        <div style={{fontSize:11,color:"#64748b"}}>Cybersecurity risk assessment and mission assurance framework for optical and hybrid space communication architectures</div>
+        <div style={{fontSize:10,color:"#475569",marginTop:4}}>Khadija Taki | CMU Heinz College MSISPM | ktaki@andrew.cmu.edu | Built with NIST SP 800-53 + MITRE ATLAS mappings</div>
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"300px 1fr",minHeight:"calc(100vh - 120px)"}}>
+        {/* Config Panel */}
+        <div style={{padding:20,borderRight:"1px solid rgba(255,255,255,0.06)",overflowY:"auto",maxHeight:"calc(100vh - 120px)"}}>
+          <div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0",marginBottom:16}}>⚙ Mission Configuration</div>
+            <Section title="MISSION TYPE">{MISSION_TYPES.map(o=><Btn key={o.id} sel={cfg.missionType} id={o.id} label={o.label} icon={o.icon} onClick={v=>setCfg({...cfg,missionType:v})}/>)}</Section>
+            <Section title="COMMUNICATION ARCHITECTURE">{COMM_TYPES.map(o=><Btn key={o.id} sel={cfg.commType} id={o.id} label={o.label} onClick={v=>setCfg({...cfg,commType:v})}/>)}</Section>
+            <Section title="OPERATIONAL ENVIRONMENT">{ENVIRONMENTS.map(o=><Btn key={o.id} sel={cfg.environment} id={o.id} label={o.label} onClick={v=>setCfg({...cfg,environment:v})}/>)}</Section>
+            <Section title="AUTONOMY LEVEL">{AUTONOMY_LEVELS.map(o=><Btn key={o.id} sel={cfg.autonomy} id={o.id} label={o.label} onClick={v=>setCfg({...cfg,autonomy:v})}/>)}</Section>
+            <Section title="ENCRYPTION LEVEL">{ENCRYPTION_LEVELS.map(o=><Btn key={o.id} sel={cfg.encryption} id={o.id} label={o.label} onClick={v=>setCfg({...cfg,encryption:v})}/>)}</Section>
+            <Section title="GROUND STATION TRUST">{GROUND_TRUST.map(o=><Btn key={o.id} sel={cfg.groundTrust} id={o.id} label={o.label} onClick={v=>setCfg({...cfg,groundTrust:v})}/>)}</Section>
+          </div>
+        </div>
+
+        {/* Main Panel */}
+        <div style={{padding:20,overflowY:"auto",maxHeight:"calc(100vh - 120px)"}}>
+          <div style={{display:"flex",gap:4,marginBottom:20}}>
+            {TABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"8px 16px",borderRadius:6,border:"none",background:tab===t.id?"rgba(56,189,248,0.15)":"transparent",color:tab===t.id?"#7dd3fc":"#64748b",fontSize:12,fontWeight:tab===t.id?700:400,cursor:"pointer",fontFamily:"inherit"}}>{t.label}</button>)}
+          </div>
+
+          {tab==="overview"&&<div style={{display:"flex",flexDirection:"column",gap:20}}>
+            {/* Composite Score */}
+            <div style={{display:"flex",alignItems:"center",gap:24,padding:20,background:"rgba(255,255,255,0.03)",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)"}}>
+              <div style={{position:"relative",width:120,height:120,flexShrink:0}}>
+                <svg viewBox="0 0 120 120" style={{transform:"rotate(-90deg)"}}><circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/><circle cx="60" cy="60" r="54" fill="none" stroke={r.color} strokeWidth="8" strokeDasharray={circ} strokeDashoffset={circ-(avg*circ)} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1)"}}/></svg>
+                <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",textAlign:"center"}}><div style={{fontSize:28,fontWeight:800,color:r.color}}>{(avg*100).toFixed(0)}</div><div style={{fontSize:9,color:"#64748b",letterSpacing:"0.1em"}}>COMPOSITE</div></div>
+              </div>
+              <div>
+                <div style={{fontSize:18,fontWeight:800,color:r.color,marginBottom:4}}>{r.label} RISK POSTURE</div>
+                <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>{crit>0&&<span style={{color:"#ef4444",fontWeight:700}}>{crit} critical</span>}{crit>0&&high>0&&" and "}{high>0&&<span style={{color:"#f97316",fontWeight:700}}>{high} high</span>}{(crit>0||high>0)&&" risk vectors identified. "}Peak threat score: {(mx*100).toFixed(0)}%.</div>
+              </div>
+            </div>
+            {/* Bar Chart */}
+            <div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,marginBottom:16}}>Threat Severity Distribution</div>
+              {THREATS.map(t=>({...t,s:score(t,cfg)})).sort((a,b)=>b.s-a.s).map(t=>{const rv=risk(t.s);return <div key={t.id} style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+                <div style={{width:150,fontSize:11,color:"#94a3b8",textAlign:"right",flexShrink:0}}>{t.icon} {t.name}</div>
+                <div style={{flex:1,height:20,background:"rgba(255,255,255,0.04)",borderRadius:4,overflow:"hidden"}}><div style={{width:`${t.s*100}%`,height:"100%",background:`linear-gradient(90deg,${rv.color}44,${rv.color})`,borderRadius:4,transition:"width 0.6s"}}/></div>
+                <div style={{width:50,fontSize:11,fontWeight:700,color:rv.color,textAlign:"right"}}>{(t.s*100).toFixed(0)}%</div>
+                <div style={{fontSize:9,fontWeight:700,padding:"2px 6px",borderRadius:3,background:rv.bg,color:rv.color,width:70,textAlign:"center"}}>{rv.label}</div>
+              </div>;})}
+            </div>
+          </div>}
+
+          {tab==="comparison"&&<div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,marginBottom:16}}>RF vs Optical Risk Comparison</div>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr style={{borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
+                <th style={{textAlign:"left",padding:"8px 12px",color:"#64748b",fontWeight:600}}>Threat Vector</th>
+                <th style={{textAlign:"center",padding:"8px 12px",color:"#ef4444",fontWeight:600}}>RF Risk</th>
+                <th style={{textAlign:"center",padding:"8px 12px",color:"#22c55e",fontWeight:600}}>Optical Risk</th>
+                <th style={{textAlign:"center",padding:"8px 12px",color:"#38bdf8",fontWeight:600}}>Delta</th>
+              </tr></thead>
+              <tbody>{THREATS.map(t=>{
+                const rfC={...cfg,commType:"rf_only"},optC={...cfg,commType:"optical_only"};
+                const rs=score(t,rfC),os=score(t,optC),d=rs-os;
+                const rr=risk(rs),or=risk(os);
+                return <tr key={t.id} style={{borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+                  <td style={{padding:"8px 12px",color:"#cbd5e1"}}>{t.icon} {t.name}</td>
+                  <td style={{textAlign:"center",padding:"8px 12px",color:rr.color,fontWeight:700}}>{(rs*100).toFixed(0)}%</td>
+                  <td style={{textAlign:"center",padding:"8px 12px",color:or.color,fontWeight:700}}>{(os*100).toFixed(0)}%</td>
+                  <td style={{textAlign:"center",padding:"8px 12px",fontWeight:700,color:d>0?"#22c55e":d<0?"#ef4444":"#64748b"}}>{d>0?"▼":d<0?"▲":"—"} {Math.abs(d*100).toFixed(0)}%</td>
+                </tr>;
+              })}</tbody>
+            </table>
+          </div>}
+
+          {tab==="threats"&&<div>{THREATS.map(t=>{
+            const s2=score(t,cfg),rv=risk(s2);
+            return <div key={t.id} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10,padding:20,marginBottom:12}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+                <div><div style={{fontSize:16,fontWeight:700}}>{t.icon} {t.name}</div><div style={{fontSize:12,color:"#64748b",marginTop:4}}>{t.desc}</div></div>
+                <div style={{padding:"4px 12px",borderRadius:6,background:rv.bg,color:rv.color,fontWeight:800,fontSize:13,border:`1px solid ${rv.color}33`,flexShrink:0}}>{(s2*100).toFixed(0)}% {rv.label}</div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
+                <div style={{background:"rgba(239,68,68,0.06)",borderRadius:8,padding:12,border:"1px solid rgba(239,68,68,0.15)"}}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#ef4444",letterSpacing:"0.1em",marginBottom:6}}>RF PROFILE ({(t.rfBase*100).toFixed(0)}%)</div>
+                  <div style={{fontSize:11,color:"#cbd5e1",lineHeight:1.5}}>{t.rfDetail}</div>
+                </div>
+                <div style={{background:"rgba(34,197,94,0.06)",borderRadius:8,padding:12,border:"1px solid rgba(34,197,94,0.15)"}}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#22c55e",letterSpacing:"0.1em",marginBottom:6}}>OPTICAL PROFILE ({(t.optBase*100).toFixed(0)}%)</div>
+                  <div style={{fontSize:11,color:"#cbd5e1",lineHeight:1.5}}>{t.optDetail}</div>
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+                <div><div style={{fontSize:10,fontWeight:700,color:"#64748b",marginBottom:6}}>NIST SP 800-53</div><div style={{display:"flex",flexWrap:"wrap",gap:4}}>{t.nist.map(c=><span key={c} style={{fontSize:10,padding:"2px 6px",borderRadius:3,background:"rgba(56,189,248,0.12)",color:"#7dd3fc",fontWeight:600}}>{c}</span>)}</div></div>
+                <div><div style={{fontSize:10,fontWeight:700,color:"#64748b",marginBottom:6}}>MITRE ATLAS</div><div style={{fontSize:10,color:"#f59e0b",fontWeight:500}}>{t.atlas}</div></div>
+                <div><div style={{fontSize:10,fontWeight:700,color:"#64748b",marginBottom:6}}>MITIGATIONS</div>{t.mitigations.map((m,i)=><div key={i} style={{fontSize:10,color:"#94a3b8",marginBottom:2}}>• {m}</div>)}</div>
+              </div>
+            </div>;
+          })}</div>}
+
+          {tab==="surface"&&<div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,marginBottom:16}}>Attack Surface Map</div>
+            {[
+              {name:"Space Terminal",threats:["endpoint","misalignment","supply_chain","ai_manip"],icon:"🛰️"},
+              {name:"Uplink / Downlink",threats:["interception","jamming","spoofing","data_integrity"],icon:"📡"},
+              {name:"Ground Segment",threats:["ground","key_mgmt","endpoint"],icon:"🏢"},
+            ].map(seg=>{
+              const st=seg.threats.map(tid=>{const t=THREATS.find(x=>x.id===tid);return t?{...t,s:score(t,cfg)}:null;}).filter(Boolean).sort((a,b)=>b.s-a.s);
+              const av=st.reduce((a,b)=>a+b.s,0)/st.length;
+              const sr=risk(av);
+              return <div key={seg.name} style={{marginBottom:8}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,padding:14,background:sr.bg,borderRadius:8,border:`1px solid ${sr.color}22`}}>
+                  <div style={{width:44,height:44,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",background:`${sr.color}22`,fontSize:20,flexShrink:0}}>{seg.icon}</div>
+                  <div style={{flex:1}}><div style={{fontSize:13,fontWeight:700}}>{seg.name}</div><div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{st.map(s=>s.name).join(" · ")}</div></div>
+                  <div style={{padding:"4px 10px",borderRadius:6,background:sr.bg,color:sr.color,fontWeight:800,fontSize:12,border:`1px solid ${sr.color}33`}}>{(av*100).toFixed(0)}% {sr.label}</div>
+                </div>
+                <div style={{padding:"8px 16px"}}>{st.map(s=>{const rv=risk(s.s);return <div key={s.id} style={{display:"flex",alignItems:"center",gap:8,padding:"4px 0"}}>
+                  <div style={{width:120,fontSize:10,color:"#64748b"}}>{s.icon} {s.name}</div>
+                  <div style={{flex:1,height:6,background:"rgba(255,255,255,0.04)",borderRadius:3}}><div style={{width:`${s.s*100}%`,height:"100%",background:rv.color,borderRadius:3,transition:"width 0.4s"}}/></div>
+                  <div style={{fontSize:10,fontWeight:700,color:rv.color,width:35,textAlign:"right"}}>{(s.s*100).toFixed(0)}%</div>
+                </div>;})}</div>
+              </div>;
+            })}
+          </div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
+</body>
+</html>
