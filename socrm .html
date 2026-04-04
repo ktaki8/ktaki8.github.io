@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOCRM | Khadija Taki</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1a1a1a;
+    --text: #e0e0e0;
+    --muted: #666;
+    --accent: #00c9a7;
+    --blue: #38bdf8;
+    --orange: #ff6b35;
+    --purple: #a78bfa;
+    --gold: #e8c547;
+    --red: #ef4444;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Instrument Serif', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--mono); }
+
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-back {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-back:hover { color: var(--accent); }
+
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 120px 40px 80px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .tag-blue { background: rgba(56,189,248,0.1); color: #7dd3fc; }
+  .tag-green { background: rgba(0,201,167,0.1); color: #00c9a7; }
+  .tag-orange { background: rgba(255,107,53,0.1); color: #ff6b35; }
+  .tag-gold { background: rgba(232,197,71,0.1); color: #e8c547; }
+
+  h1 {
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+    color: var(--blue);
+  }
+
+  h1 span { color: var(--text); font-weight: 300; }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .overview-cell {
+    background: var(--surface);
+    padding: 20px;
+  }
+
+  .cell-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .cell-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--blue);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .prose {
+    font-size: 14px;
+    color: #aaa;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .prose strong { color: var(--text); font-weight: 600; }
+
+  /* Threat Matrix Table */
+  .threat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 12px;
+  }
+
+  .threat-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .threat-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: #bbb;
+  }
+
+  .threat-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  .risk-high { color: var(--red); font-weight: 700; }
+  .risk-mod { color: var(--gold); font-weight: 700; }
+  .risk-low { color: #22c55e; font-weight: 700; }
+  .delta-pos { color: #22c55e; font-weight: 700; }
+  .delta-neg { color: var(--red); font-weight: 700; }
+  .delta-zero { color: var(--muted); }
+
+  /* Findings Grid */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .finding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .finding-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56,189,248,0.3);
+  }
+
+  .finding-stat {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .finding-stat.green { color: #22c55e; }
+  .finding-stat.red { color: var(--red); }
+  .finding-stat.blue { color: var(--blue); }
+  .finding-stat.gold { color: var(--gold); }
+
+  .finding-label {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Framework Badges */
+  .framework-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .framework-badge {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: #bbb;
+    transition: border-color 0.2s;
+  }
+
+  .framework-badge:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* Architecture */
+  .arch-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #aaa;
+  }
+
+  .arch-block code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(56,189,248,0.08);
+    color: var(--blue);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* CTA */
+  .cta-row {
+    display: flex;
+    gap: 12px;
+    margin: 32px 0;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .cta-primary {
+    background: var(--blue);
+    color: #0a0a0a;
+  }
+
+  .cta-primary:hover { background: #7dd3fc; }
+
+  .cta-secondary {
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid rgba(56,189,248,0.3);
+  }
+
+  .cta-secondary:hover { border-color: var(--blue); background: rgba(56,189,248,0.08); }
+
+  /* Footer Nav */
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 56px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+  }
+
+  .footer-nav a {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover { color: var(--blue); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .content-block {
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 80px; }
+    .overview-grid { grid-template-columns: 1fr 1fr; }
+    .findings-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ktaki8</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <div class="tag-row">
+    <span class="tag tag-blue">Space Cybersecurity</span>
+    <span class="tag tag-green">Risk Assessment</span>
+    <span class="tag tag-orange">NIST SP 800-53</span>
+    <span class="tag tag-gold">MITRE ATLAS</span>
+  </div>
+
+  <h1>SOCRM</h1>
+
+  <p class="subtitle">
+    Space Optical Communications Cyber Risk Mapper. An interactive decision-support tool
+    assessing cybersecurity risks for optical and hybrid RF/optical space communication
+    architectures supporting lunar, cislunar, and deep-space missions.
+  </p>
+
+  <div class="overview-grid">
+    <div class="overview-cell">
+      <div class="cell-label">Domain</div>
+      <div class="cell-value">Space Communications</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Context</div>
+      <div class="cell-value">NASA Artemis II O2O</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Threat Vectors</div>
+      <div class="cell-value">10 Categories</div>
+    </div>
+    <div class="overview-cell">
+      <div class="cell-label">Frameworks</div>
+      <div class="cell-value">NIST + ATLAS</div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="socrm-dashboard.html" class="cta-btn cta-primary">Launch Dashboard →</a>
+    <a href="https://github.com/ktaki8/ktaki8.github.io" target="_blank" class="cta-btn cta-secondary">View Source</a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Overview</div>
+    <p class="prose">
+      As NASA's Artemis II mission deploys the Orion Optical Communications System (O2O) to demonstrate
+      laser-based data links from the Moon, the cybersecurity community faces a critical question:
+      <strong>what new threat surfaces emerge when we shift from radio frequency to optical communications in space?</strong>
+    </p>
+    <p class="prose">
+      SOCRM addresses this by providing a configurable risk assessment engine that maps
+      <strong>10 threat categories</strong> across mission parameters, communication architectures, and
+      operational environments, producing quantified risk scores with
+      <strong>NIST SP 800-53 control mappings</strong> and <strong>MITRE ATLAS alignment</strong>.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Key Findings</div>
+
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="finding-stat green">-70%</div>
+        <div class="finding-label">Interception risk reduction with optical vs RF architectures</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-stat green">-55%</div>
+        <div class="finding-label">Jamming exposure reduction with optical communications</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-stat red">+45%</div>
+        <div class="finding-label">New attack surface from precision pointing (PAT) system disruption</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-stat blue">10</div>
+        <div class="finding-label">Threat categories modeled with NIST SP 800-53 control mappings</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Threat Matrix</div>
+
+    <table class="threat-table">
+      <thead>
+        <tr>
+          <th>Threat Vector</th>
+          <th>RF Risk</th>
+          <th>Optical Risk</th>
+          <th>Delta</th>
+          <th>Segment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Signal Interception</td><td class="risk-high">85%</td><td class="risk-low">15%</td><td class="delta-pos">▼ 70%</td><td>Link</td></tr>
+        <tr><td>Communication Jamming</td><td class="risk-high">80%</td><td class="risk-low">25%</td><td class="delta-pos">▼ 55%</td><td>Link</td></tr>
+        <tr><td>Signal Spoofing</td><td class="risk-high">70%</td><td class="risk-low">20%</td><td class="delta-pos">▼ 50%</td><td>Link</td></tr>
+        <tr><td>Endpoint Compromise</td><td class="risk-mod">65%</td><td class="risk-mod">60%</td><td class="delta-zero">▼ 5%</td><td>Space / Ground</td></tr>
+        <tr><td>Optical Terminal Misalignment</td><td class="risk-low">10%</td><td class="risk-mod">55%</td><td class="delta-neg">▲ 45%</td><td>Space</td></tr>
+        <tr><td>Supply Chain Insertion</td><td class="risk-mod">50%</td><td class="risk-mod">50%</td><td class="delta-zero">— 0%</td><td>All</td></tr>
+        <tr><td>Key Management Failure</td><td class="risk-mod">55%</td><td class="risk-mod">45%</td><td class="delta-pos">▼ 10%</td><td>All</td></tr>
+        <tr><td>AI Decision Manipulation</td><td class="risk-mod">40%</td><td class="risk-mod">40%</td><td class="delta-zero">— 0%</td><td>Space / Ground</td></tr>
+        <tr><td>Data Integrity Loss</td><td class="risk-mod">60%</td><td class="risk-low">30%</td><td class="delta-pos">▼ 30%</td><td>Link</td></tr>
+        <tr><td>Ground Segment Compromise</td><td class="risk-high">75%</td><td class="risk-mod">65%</td><td class="delta-pos">▼ 10%</td><td>Ground</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Risk Calculation Model</div>
+
+    <div class="arch-block">
+      <code>RiskScore = BaseThreatScore × EnvironmentMod × AutonomyMod × EncryptionMod × GroundTrustMod</code>
+      <br><br>
+      Where <code>BaseThreatScore</code> is determined by communication type (RF, optical, or hybrid average).
+      <code>EnvironmentMod</code> scales from LEO (0.7×) to Deep Space (1.15×).
+      <code>AutonomyMod</code> adjusts for human-in-the-loop (0.8×) vs fully autonomous (1.25×).
+      <code>EncryptionMod</code> ranges from QKD-enabled (0.4×) to no encryption (1.6×).
+      <code>GroundTrustMod</code> spans SCIF-level (0.6×) to untrusted/contested (1.7×).
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Configurable Parameters</div>
+    <p class="prose">
+      The interactive dashboard allows mission planners to configure:
+      <strong>Mission type</strong> (crewed lunar, robotic lunar, LEO station, deep space probe),
+      <strong>communication architecture</strong> (RF only, optical only, hybrid),
+      <strong>operational environment</strong> (LEO, MEO/GEO, cislunar, deep space),
+      <strong>autonomy level</strong> (manual, AI-assisted, fully autonomous),
+      <strong>encryption posture</strong> (AES-256, post-quantum, QKD, none/legacy), and
+      <strong>ground station trust</strong> (SCIF-level, commercial, shared/allied, untrusted).
+    </p>
+    <p class="prose">
+      Each configuration produces real-time composite risk scores, RF vs optical comparisons,
+      detailed threat profiles with NIST and ATLAS mappings, and segment-level attack surface maps.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Standards & Frameworks</div>
+
+    <div class="framework-row">
+      <span class="framework-badge">NIST SP 800-53 Rev. 5</span>
+      <span class="framework-badge">MITRE ATLAS</span>
+      <span class="framework-badge">NIST CSF 2.0</span>
+      <span class="framework-badge">Space Policy Directive 5</span>
+      <span class="framework-badge">CCSDS</span>
+    </div>
+
+    <p class="prose" style="margin-top: 16px;">
+      Every threat vector maps to specific NIST SP 800-53 security controls and MITRE ATLAS
+      adversarial ML tactics. The framework identifies governance gaps in SPD-5 and CCSDS standards
+      for optical link security, producing actionable mitigation recommendations for each threat category.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-block">
+    <div class="section-label">// Context</div>
+    <p class="prose">
+      NASA's Artemis II mission carries the O2O laser communications payload, developed by
+      MIT Lincoln Laboratory and NASA Goddard, capable of transmitting data at 260 Mbps via
+      infrared laser links to ground terminals at White Sands, NM and Table Mountain, CA.
+      This builds on the LLCD (2013), LCRD (2021), TBIRD (2022), and ILLUMA-T (2023) demonstrations.
+    </p>
+    <p class="prose">
+      Optical communications offer significant security advantages over RF: near-zero interception
+      surface due to sub-arcsecond beam divergence, low probability of detection, and inherent
+      resistance to broadband jamming. However, they also introduce new threat vectors including
+      precision pointing disruption, atmospheric denial-of-service, concentrated ground terminal
+      targeting, and novel supply chain risks in specialized optical components.
+    </p>
+  </div>
+
+  <div class="footer-nav">
+    <a href="space-cyber.html">← Space Cyber Crew</a>
+    <a href="index.html">Back to Portfolio →</a>
+  </div>
+</main>
+
+</body>
+</html>
