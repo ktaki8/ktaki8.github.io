@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recognition Is Not Reasoning: The Mythos AI Problem No One Is Governing - Khadija Taki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090b0e;
+  --surface: #10131a;
+  --surface2: #161b24;
+  --border: #1c2230;
+  --border2: #283040;
+  --text: #dde3ee;
+  --muted: #65738a;
+  --muted2: #404c60;
+  --accent: #4ee8a8;
+  --accent-dim: rgba(78,232,168,0.12);
+  --accent-border: rgba(78,232,168,0.25);
+  --warn: #f0a050;
+  --warn-dim: rgba(240,160,80,0.08);
+  --warn-border: rgba(240,160,80,0.22);
+  --danger: #e05555;
+  --blue: #4a90e8;
+  --blue-dim: rgba(74,144,232,0.1);
+  --blue-border: rgba(74,144,232,0.25);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.container { max-width: 800px; margin: 0 auto; padding: 64px 32px 120px; }
+
+/* ── HEADER ── */
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 36px; font-size: 11px;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted);
+}
+.eyebrow::before { content:''; width:28px; height:1px; background: var(--accent); display:block; }
+.badge {
+  background: var(--accent-dim); border: 1px solid var(--accent-border);
+  color: var(--accent); padding: 3px 10px; border-radius: 4px; font-size: 10px;
+}
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(30px, 5.5vw, 48px);
+  font-weight: 800; line-height: 1.1;
+  letter-spacing: -0.025em; margin-bottom: 8px; color: var(--text);
+}
+h1 em { color: var(--accent); font-style: normal; }
+.deck {
+  font-size: 15px; color: var(--muted); max-width: 580px;
+  line-height: 1.75; margin: 18px 0 36px;
+}
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center;
+  padding-bottom: 40px; border-bottom: 1px solid var(--border); margin-bottom: 52px;
+  font-size: 12px; color: var(--muted);
+}
+.meta-row strong { color: var(--text); font-weight: 500; }
+.sep { color: var(--border2); }
+
+/* ── STATS ── */
+.stats {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; margin-bottom: 60px;
+}
+.stat { background: var(--surface); padding: 22px 18px; }
+.stat-n {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  color: var(--accent); display: block; margin-bottom: 5px; line-height: 1;
+}
+.stat-l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* ── SECTIONS ── */
+.section { margin-bottom: 56px; }
+h2 {
+  font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--text); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2 .n {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 400;
+  color: var(--accent); background: var(--accent-dim);
+  border: 1px solid var(--accent-border); padding: 2px 8px; border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+p { color: #a8b4c8; font-size: 14.5px; line-height: 1.85; margin-bottom: 16px; }
+p:last-child { margin-bottom: 0; }
+
+/* ── CALLOUT BLOCKS ── */
+.callout {
+  border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 28px 0;
+}
+.callout.accent {
+  background: var(--accent-dim); border-left: 3px solid var(--accent);
+}
+.callout.warn {
+  background: var(--warn-dim); border-left: 3px solid var(--warn);
+}
+.callout.blue {
+  background: var(--blue-dim); border-left: 3px solid var(--blue);
+}
+.callout-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.13em;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.callout.accent .callout-label { color: var(--accent); }
+.callout.warn .callout-label { color: var(--warn); }
+.callout.blue .callout-label { color: var(--blue); }
+.callout-label::after { content:''; flex:1; height:1px; opacity:0.2; background: currentColor; }
+.callout p { margin: 0; font-size: 13.5px; }
+.callout.accent p { color: #8ee8c4; }
+.callout.warn p { color: #c8a878; }
+.callout.blue p { color: #88aad8; }
+
+/* ── CVE COMPARISON ── */
+.cve-compare {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 12px; align-items: center; margin: 24px 0;
+}
+.cve-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 16px 18px;
+}
+.cve-card.new { border-color: var(--accent-border); }
+.cve-card.old { border-color: var(--warn-border); }
+.cve-id { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+.cve-card.new .cve-id { color: var(--accent); }
+.cve-card.old .cve-id { color: var(--warn); }
+.cve-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.cve-arrow { color: var(--muted2); font-size: 18px; text-align: center; }
+
+/* ── DIAGRAM ── */
+.diagram-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px 24px; margin: 28px 0;
+}
+.diagram-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+}
+.diagram-title::before { content:'//'; color: var(--accent); }
+
+.capability-chart { width: 100%; }
+.cap-row {
+  display: grid; grid-template-columns: 130px 1fr 52px;
+  gap: 12px; align-items: center; margin-bottom: 14px;
+}
+.cap-label { font-size: 12px; color: var(--muted); text-align: right; }
+.cap-bar-track {
+  height: 8px; background: var(--surface2); border-radius: 4px;
+  position: relative; overflow: hidden;
+}
+.cap-bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.cap-bar-fill.accent { background: var(--accent); }
+.cap-bar-fill.warn { background: var(--warn); }
+.cap-bar-fill.blue { background: var(--blue); }
+.cap-bar-fill.danger { background: var(--danger); }
+.cap-val { font-size: 11px; color: var(--muted); text-align: left; }
+
+.chart-legend {
+  display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── TIMELINE ── */
+.timeline { padding-left: 20px; position: relative; margin: 28px 0; }
+.timeline::before {
+  content:''; position: absolute; left: 5px; top: 8px; bottom: 8px;
+  width: 1px; background: var(--border2);
+}
+.tl { position: relative; padding-left: 22px; margin-bottom: 22px; }
+.tl::before {
+  content:''; position: absolute; left:-15px; top: 7px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border2); border: 1px solid var(--muted2);
+}
+.tl.hi::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.tl.warn::before { background: var(--warn); border-color: var(--warn); box-shadow: 0 0 0 3px var(--warn-dim); }
+.tl-date { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+.tl-text { font-size: 13.5px; color: #8a96aa; line-height: 1.65; }
+.tl-text strong { color: var(--text); font-weight: 500; }
+
+/* ── PULL QUOTE ── */
+.pull {
+  border-left: 3px solid var(--blue); padding: 6px 0 6px 22px; margin: 32px 0;
+}
+.pull blockquote {
+  font-size: 17px; color: var(--text); font-style: italic; line-height: 1.6;
+  font-family: 'Syne', sans-serif; font-weight: 400;
+}
+.pull cite {
+  display: block; font-size: 11px; color: var(--muted); margin-top: 10px;
+  font-style: normal; letter-spacing: 0.07em; text-transform: uppercase;
+}
+
+/* ── RECS ── */
+.rec-list { list-style: none; margin: 20px 0; }
+.rec-list li {
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border);
+  font-size: 14px; color: #8a96aa; line-height: 1.75;
+}
+.rec-list li:last-child { border-bottom: none; }
+.rec-n {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--accent); padding-top: 1px;
+}
+.rec-list strong { color: var(--text); font-weight: 500; }
+
+/* ── FOOTNOTES ── */
+.footnotes {
+  margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--border);
+}
+.footnotes-title {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted2); margin-bottom: 16px;
+}
+.fn-list { list-style: none; }
+.fn-list li {
+  display: block;
+  font-size: 12px; color: var(--muted); line-height: 1.8;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+  word-break: break-word;
+}
+.fn-list li:last-child { border-bottom: none; }
+.fn-list li span { color: var(--accent); margin-right: 8px; }
+.fn-list a { color: var(--blue); text-decoration: none; word-break: break-all; display: inline; }
+.fn-list a:hover { text-decoration: underline; }
+sup { font-size: 10px; color: var(--accent); margin-left: 1px; vertical-align: super; cursor: default; }
+
+/* ── FOOTER ── */
+.brief-footer {
+  margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; justify-content: space-between;
+  align-items: flex-start; gap: 20px;
+}
+.author-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.author-role { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-size: 11px; padding: 4px 10px; background: var(--surface);
+  border: 1px solid var(--border2); border-radius: 4px;
+  color: var(--muted); letter-spacing: 0.04em;
+}
+
+code {
+  font-family: 'DM Mono', monospace; font-size: 12.5px;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 3px; color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .stats { grid-template-columns: 1fr; }
+  .cve-compare { grid-template-columns: 1fr; }
+  .cve-arrow { display: none; }
+  .container { padding: 40px 20px 80px; }
+  h1 { font-size: 26px; }
+  .cap-row { grid-template-columns: 90px 1fr 44px; }
+  .cap-label { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="eyebrow">
+  <span class="badge">Research Brief</span>
+  AI Security Policy · May 2026
+</div>
+
+<h1>Recognition Is Not <span style="color:var(--accent)">Reasoning:</span><br>The <em>Mythos AI</em> Problem<br>No One Is Governing</h1>
+
+<p class="deck">
+  CVE-2026-4747 was framed as a historic milestone - the first kernel exploit autonomously discovered by AI. But the story behind the story reveals something more important: we have no shared framework for evaluating what AI systems are actually doing when they "find" vulnerabilities. Until we do, the governance gap will widen faster than any patch cycle can close it.
+</p>
+
+<div class="meta-row">
+  <strong>Khadija Taki</strong>
+  <span class="sep">·</span>
+  <span>MSISPM Candidate, Carnegie Mellon University</span>
+  <span class="sep">·</span>
+  <span>AI Security &amp; Policy Research</span>
+  <span class="sep">·</span>
+  <span>May 2026</span>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat-n">17 yrs</span>
+    <span class="stat-l">The bug's age when Mythos "discovered" it in FreeBSD</span>
+  </div>
+  <div class="stat">
+    <span class="stat-n">8 / 8</span>
+    <span class="stat-l">Open-weight models that detected the same bug zero-shot<sup>6</sup></span>
+  </div>
+  <div class="stat">
+    <span class="stat-n">4 hrs</span>
+    <span class="stat-l">Time for a second team to independently re-exploit it using Opus 4.6<sup>4</sup></span>
+  </div>
+</div>
+
+
+<!-- SECTION 1 -->
+<div class="section">
+  <h2><span class="n">01</span> The Case</h2>
+
+  <p>
+    In April 2026, Anthropic announced Claude Mythos Preview - a model that autonomously discovered and exploited thousands of zero-day vulnerabilities. The flagship case was <code>CVE-2026-4747</code>: a remote kernel code execution vulnerability in FreeBSD's RPCSEC_GSS authentication handler, reachable by an unauthenticated attacker from anywhere on the internet.<sup>1</sup>
+  </p>
+
+  <p>
+    Anthropic's claim was precise: Mythos didn't just find the bug - it built a working 20-gadget return-oriented programming chain split across multiple network packets, fully autonomously, after a single prompt. According to the Cloud Security Alliance's analysis of Mythos, it is the first AI model documented as completing an end-to-end simulated multi-step corporate network attack.<sup>3</sup>
+  </p>
+
+  <div class="callout accent">
+    <div class="callout-label">Technical detail</div>
+    <p>The overflow occurs in <code>svc_rpc_gss_validate()</code>, which copies attacker-controlled credential data into a 128-byte stack buffer. With 32 bytes already consumed by RPC header fields, only 96 bytes remain - but the XDR layer permits credentials up to 400 bytes, giving 304 bytes of overflow in kernel ring-0 context.<sup>4</sup></p>
+  </div>
+
+  <div class="cve-compare">
+    <div class="cve-card new">
+      <div class="cve-id">CVE-2026-4747</div>
+      <div class="cve-desc">FreeBSD RPCSEC_GSS · 2026<br>Stack buffer overflow in NFS kernel module · Remote unauthenticated RCE</div>
+    </div>
+    <div class="cve-arrow">⟷</div>
+    <div class="cve-card old">
+      <div class="cve-id">CVE-2007-3999</div>
+      <div class="cve-desc">MIT Kerberos · 2007<br>Stack buffer overflow in svcauth_gss.c · Same code path, same pattern class</div>
+    </div>
+  </div>
+
+  <p>
+    The problem: the underlying code was copied from MIT Kerberos into FreeBSD in the early 2000s - and the bug came with it. Researchers quickly noted structural similarity to <code>CVE-2007-3999</code>, a Kerberos stack overflow patched nineteen years earlier. The question of whether Mythos "reasoned" to a novel discovery or pattern-matched against latent training data became the fault line of a debate the security community is still having.
+  </p>
+</div>
+
+
+<!-- SECTION 2 -->
+<div class="section">
+  <h2><span class="n">02</span> Timeline</h2>
+
+  <div class="timeline">
+    <div class="tl">
+      <div class="tl-date">Feb 5, 2026</div>
+      <div class="tl-text">Carlini et al. publish <em>"Evaluating and mitigating the growing risk of LLM-discovered 0-days"</em> - documenting <strong>500+ validated high-severity vulnerabilities</strong> in open-source software, apparently using Opus 4.6.<sup>5</sup></div>
+    </div>
+    <div class="tl">
+      <div class="tl-date">Feb 24, 2026</div>
+      <div class="tl-text">Mythos Preview deployed internally at Anthropic. Carlini uses it within a pre-built vulnerability-hunting scaffold to find CVE-2026-4747.<sup>5</sup></div>
+    </div>
+    <div class="tl hi">
+      <div class="tl-date">Mar 26, 2026</div>
+      <div class="tl-text">FreeBSD patches the vulnerability. Advisory credits <strong>"Nicholas Carlini using Claude, Anthropic"</strong> - deliberately obscuring the Mythos model name six weeks before launch.<sup>5</sup></div>
+    </div>
+    <div class="tl warn">
+      <div class="tl-date">Mar 29, 2026 - 4 hrs later</div>
+      <div class="tl-text">Calif.io's MAD Bugs project asks Opus 4.6 to develop an exploit for the already-disclosed CVE. <strong>Working root shell delivered in ~4 hours.</strong> Human was largely AFK.<sup>4</sup></div>
+    </div>
+    <div class="tl hi">
+      <div class="tl-date">Apr 7, 2026</div>
+      <div class="tl-text">Anthropic publicly launches Mythos Preview and Project Glasswing. CVE-2026-4747 is the headline showcase. AISLE tests eight open-weight models on the same vulnerability - <strong>all eight detect it.</strong><sup>6</sup></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION 3 -->
+<div class="section">
+  <h2><span class="n">03</span> What the Controversy Actually Reveals</h2>
+
+  <p>
+    The debate about whether Mythos "really" discovered something new misses the more important governance question. Both sides are partly correct - and that is exactly the problem.
+  </p>
+
+  <p>
+    Critics are right that detection is now commodity. A 3.6-billion-parameter open-weight model costing eleven cents per million tokens identified the same vulnerability zero-shot.<sup>6</sup> If any competent model can find this class of bug, Anthropic's "first" claim is primarily a claim about autonomous exploit construction - not vulnerability discovery.
+  </p>
+
+  <p>
+    Anthropic's defenders are also right that exploit construction is a genuinely different capability. Building a 20-gadget ROP chain that bypasses FreeBSD's lack of KASLR, splits across multiple network packets, and reconstructs the kernel host ID from a single NFSv4 exchange call is not something you can do by recognizing a buffer overflow pattern.<sup>1</sup> The gap between "this code looks vulnerable" and "here is a working root shell" is where Mythos represents a qualitative step change.
+  </p>
+
+  <div class="pull">
+    <blockquote>"The question isn't whether AI can find bugs. It's whether we can govern what it does after it finds them."</blockquote>
+    <cite>- Khadija Taki, May 2026</cite>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">AI capability levels: detection vs. exploitation</div>
+    <div class="capability-chart">
+      <div class="cap-row">
+        <div class="cap-label">Pattern detection</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill accent" style="width:95%"></div></div>
+        <div class="cap-val">Commodity</div>
+      </div>
+      <div class="cap-row">
+        <div class="cap-label">Bug triage</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill accent" style="width:82%"></div></div>
+        <div class="cap-val">Widespread</div>
+      </div>
+      <div class="cap-row">
+        <div class="cap-label">PoC exploit</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill warn" style="width:58%"></div></div>
+        <div class="cap-val">Emerging</div>
+      </div>
+      <div class="cap-row">
+        <div class="cap-label">ROP chains</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill warn" style="width:35%"></div></div>
+        <div class="cap-val">Frontier</div>
+      </div>
+      <div class="cap-row">
+        <div class="cap-label">Autonomous chains</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill danger" style="width:18%"></div></div>
+        <div class="cap-val">Mythos-tier</div>
+      </div>
+      <div class="cap-row">
+        <div class="cap-label">Sandbox escape</div>
+        <div class="cap-bar-track"><div class="cap-bar-fill danger" style="width:8%"></div></div>
+        <div class="cap-val">Documented¹</div>
+      </div>
+    </div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Accessible to small open-weight models</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div>Requires frontier-class capability</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Currently Mythos-tier only</div>
+    </div>
+  </div>
+
+  <p>
+    The governance failure here is definitional. We have no agreed standard for what constitutes AI "discovery" versus AI-assisted reproduction of known patterns. Without that, attribution in CVE disclosures conflates fundamentally different capability levels - creating marketing incentives that distort the security record and make it impossible to calibrate policy responses.
+  </p>
+</div>
+
+
+<!-- SECTION 4 -->
+<div class="section">
+  <h2><span class="n">04</span> The Deeper Problem: Propagation</h2>
+
+  <p>
+    The Mythos controversy focuses on offensive capability. But the more insidious risk runs in the other direction: AI coding assistants trained on decades of open-source code are actively propagating insecure patterns into new software today.
+  </p>
+
+  <div class="callout warn">
+    <div class="callout-label">Supply chain risk</div>
+    <p>CVE-2026-4747 existed because a vulnerable code pattern was copied from Kerberos into FreeBSD two decades ago. AI coding tools operating at scale are repeating this process - not just reproducing functional patterns, but reproducing the bugs that came with them. The attack surface being created today will outlive the models generating it.</p>
+  </div>
+
+  <p>
+    Anthropic's Project Glasswing - a $100M defensive coalition with CrowdStrike, Cisco, Microsoft, AWS, Apple, and the Linux Foundation - represents one model for managing this asymmetry.<sup>2</sup> But it raises its own governance questions. Access to Mythos-tier defensive capability is currently limited to a small group of vetted partner organizations. What about the infrastructure that sits outside that circle?
+  </p>
+
+  <p>
+    The offense-defense gap is structural. A Mythos discovery campaign runs in hours at roughly $20,000. Nation-state research teams spend months on the same work. Meanwhile, most enterprise defenders patch annually - if at all.<sup>2</sup> The window for proactive governance is not measured in years.
+  </p>
+</div>
+
+
+<!-- SECTION 5 -->
+<div class="section">
+  <h2><span class="n">05</span> Policy Recommendations</h2>
+
+  <ul class="rec-list">
+    <li>
+      <span class="rec-n">01</span>
+      <span><strong>Establish AI-specific disclosure attribution standards.</strong> CVE attribution frameworks were not designed for AI-assisted or AI-autonomous research. MITRE, CISA, and international equivalents should develop tiered attribution language that distinguishes pattern recognition, AI-assisted triage, and autonomous exploit generation - preventing marketing-driven disclosure framing from distorting the public record.</span>
+    </li>
+    <li>
+      <span class="rec-n">02</span>
+      <span><strong>Mandate security review for AI-generated code in critical contexts.</strong> If AI coding assistants reproduce legacy vulnerability classes at scale, this is a software supply chain risk. Regulatory frameworks - analogous to SBOM requirements - should require disclosure of AI-generation provenance for code deployed in critical infrastructure and government systems.</span>
+    </li>
+    <li>
+      <span class="rec-n">03</span>
+      <span><strong>Internationalize governance of dual-use AI security models.</strong> Models like Mythos Preview exist in a regulatory gray zone: too dangerous for public release, but distributed to vetted private partners with no binding international oversight. A coordinated framework - covering access controls, disclosure obligations, and liability allocation - is needed before this class of model proliferates further.</span>
+    </li>
+    <li>
+      <span class="rec-n">04</span>
+      <span><strong>Invest in democratizing defensive AI access.</strong> Project Glasswing's limited-partner model concentrates defensive capability among the largest organizations. Policy should fund open-access defensive AI tooling - analogous to the Linux Foundation model - to prevent a two-tier security landscape where well-resourced organizations are protected and everyone else is not.</span>
+    </li>
+  </ul>
+</div>
+
+
+<!-- SECTION 6 -->
+<div class="section">
+  <h2><span class="n">06</span> Conclusion</h2>
+  <p>
+    CVE-2026-4747 will be remembered less for what Mythos found than for what the controversy revealed: AI security capabilities have outpaced both the vocabulary we use to describe them and the institutions meant to govern them. Whether Mythos "really" discovered a 17-year-old bug is, in isolation, a secondary question. The primary questions are harder and more urgent: who defines AI discovery, who controls access to autonomous exploitation capability, and who is accountable when AI-generated code introduces vulnerabilities that survive for the next two decades.
+  </p>
+  <p>
+    The window for proactive governance is narrowing. The patterns being propagated today will be the CVEs of 2043.
+  </p>
+</div>
+
+
+<!-- FOOTNOTES -->
+<div class="footnotes">
+  <div class="footnotes-title">Sources &amp; References</div>
+  <ol class="fn-list">
+    <li><span>1.</span> Anthropic Security Research. "Claude Mythos Preview." <a href="https://red.anthropic.com/2026/mythos-preview/" target="_blank">red.anthropic.com</a>, April 7, 2026.</li>
+    <li><span>2.</span> VentureBeat. "Mythos autonomously exploited vulnerabilities that survived 27 years of human review." <a href="https://venturebeat.com/security/mythos-detection-ceiling-security-teams-new-playbook" target="_blank">venturebeat.com</a>, April 2026.</li>
+    <li><span>3.</span> Cloud Security Alliance AI Safety Initiative. "Claude Mythos: AI Vulnerability Discovery and Containment Failures." <a href="https://labs.cloudsecurityalliance.org/research/ai-vuln-discovery-containment-claude-mythos-v1-0-csa-styled/" target="_blank">labs.cloudsecurityalliance.org</a>, April 13, 2026.</li>
+    <li><span>4.</span> Calif.io MAD Bugs Project. "CVE-2026-4747: FreeBSD RPCSEC_GSS Remote Kernel RCE." <a href="https://github.com/califio/publications/tree/main/MADBugs/CVE-2026-4747" target="_blank">github.com/califio</a>, March 29, 2026.</li>
+    <li><span>5.</span> flyingpenguin. "FreeBSD CVE-2026-4747 Log Suggests Mythos is a Marketing Trick." <a href="https://www.flyingpenguin.com/freebsd-cve-2026-4747-log-suggests-mythos-is-a-marketing-trick/" target="_blank">flyingpenguin.com</a>, April 2026.</li>
+    <li><span>6.</span> AISLE. "AI Cybersecurity After Mythos: The Jagged Frontier." <a href="https://aisle.com/blog/ai-cybersecurity-after-mythos-the-jagged-frontier" target="_blank">aisle.com</a>, April 7, 2026.</li>
+    <li><span>7.</span> SecureWorld. "Anthropic's Claude Mythos Autonomously Discovers, Exploits Zero-Days." <a href="https://www.secureworld.io/industry-news/anthropic-claude-mythos-finds-exploits-zero-days" target="_blank">secureworld.io</a>, April 2026.</li>
+  </ol>
+</div>
+
+
+<!-- FOOTER -->
+<div class="brief-footer">
+  <div>
+    <div class="author-name">Khadija Syada Taki</div>
+    <div class="author-role">MSISPM Candidate · Carnegie Mellon University<br>AI Security Policy &amp; Cybersecurity Research</div>
+  </div>
+  <div class="tags">
+    <span class="tag">AI Governance</span>
+    <span class="tag">Vulnerability Disclosure</span>
+    <span class="tag">Offense-Defense Gap</span>
+    <span class="tag">Supply Chain Security</span>
+    <span class="tag">CVE-2026-4747</span>
+    <span class="tag">Claude Mythos</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
